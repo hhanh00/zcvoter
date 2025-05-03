@@ -5,7 +5,7 @@ on:
   workflow_call:
   push:
     tags:
-      - zkool-v*
+      - zcvoter-v*
 
 permissions:
   contents: write
@@ -41,7 +41,7 @@ jobs:
         with:
           path: ${{ steps.package.outputs.PKG_PATH }}
       - name: Create Release
-        if: startsWith(github.ref_name, 'zkool-v')
+        if: startsWith(github.ref_name, 'zcvoter-v')
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ steps.package.outputs.PKG_PATH }}

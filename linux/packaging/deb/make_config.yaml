@@ -1,10 +1,10 @@
 # the name used to display in the OS. Specifically desktop
 # entry name
-display_name: ZKool
+display_name: ZCVoter
 
 # package name for debian/apt repository
 # the name should be all lowercase with -+.
-package_name: zkool
+package_name: zcvoter
 
 maintainer:
   name: Hanh Huynh Huu
@@ -84,7 +84,7 @@ generic_name: Crypto Wallet
 # supported_mime_type:
 #   - audio/mpeg
 
-metainfo: linux/packaging/zkool.appdata.xml
+metainfo: linux/packaging/zcvoter.appdata.xml
 
 # shown when right clicked the desktop entry icons
 # actions:

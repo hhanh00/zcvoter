@@ -5,7 +5,7 @@ on:
   workflow_call:
   push:
     tags:
-      - zkool-v*
+      - zcvoter-v*
 
 permissions:
   contents: write
@@ -27,11 +27,11 @@ jobs:
           channel: stable
       - name: Install codesign
         run: |
-          echo ${{ secrets.ANDROID_JKS }} | base64 --decode > android/app/zkool-keystore.jks
+          echo ${{ secrets.ANDROID_JKS }} | base64 --decode > android/app/zcvoter-keystore.jks
           echo storePassword=${{ secrets.JKS_PASSWORD }} > android/key.properties
           echo keyPassword=${{ secrets.JKS_PASSWORD }} >> android/key.properties
-          echo keyAlias=zkool >> android/key.properties
-          echo storeFile=zkool-keystore.jks >> android/key.properties
+          echo keyAlias=zcash-vote-client >> android/key.properties
+          echo storeFile=zcvoter-keystore.jks >> android/key.properties
       - name: Build
         run: |
           flutter build apk
@@ -41,7 +41,7 @@ jobs:
         with:
           path: ./**/*.apk
       - name: Create Release
-        if: startsWith(github.ref_name, 'zkool-v')
+        if: startsWith(github.ref_name, 'zcvoter-v')
         uses: softprops/action-gh-release@v2
         with:
           files: ./*.apk

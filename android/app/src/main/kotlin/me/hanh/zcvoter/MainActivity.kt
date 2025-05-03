@@ -1,4 +1,4 @@
-package cc.methyl.zkool
+package me.hanh.zcvoter
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

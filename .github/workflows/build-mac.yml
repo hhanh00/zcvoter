@@ -5,7 +5,7 @@ on:
   workflow_call:
   push:
     tags:
-      - zkool-v*
+      - zcvoter-v*
 
 permissions:
   contents: write
@@ -37,7 +37,7 @@ jobs:
       - name: Codesign
         run: ./misc/codesign-notarize.sh
         env:
-          APPNAME: zkool
+          APPNAME: zcvoter
           KEYCHAIN_PWD: azB27DoYCFe5kzd3
           APPLE_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
@@ -55,7 +55,7 @@ jobs:
         with:
           path: ./*.dmg
       - name: Create Release
-        if: startsWith(github.ref_name, 'zkool-v')
+        if: startsWith(github.ref_name, 'zcvoter-v')
         uses: softprops/action-gh-release@v2
         with:
           files: ./*.dmg
