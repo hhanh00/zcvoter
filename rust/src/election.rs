@@ -2,7 +2,7 @@ use anyhow::Result;
 use sqlx::SqlitePool;
 use zcash_vote::election::Election;
 
-pub async fn connect_election(connection: &SqlitePool, url: &str, seed: &str) -> Result<String> {
+pub async fn connect_election(connection: &SqlitePool, url: &str, lwd: &str, seed: &str) -> Result<String> {
     let rep = reqwest::get(url).await?.error_for_status()?;
 
     let election: Election = rep.json().await?;
@@ -24,6 +24,7 @@ pub async fn connect_election(connection: &SqlitePool, url: &str, seed: &str) ->
     let connection = crate::api::get_election_connection(&election.id()).await?;
 
     zcash_vote::db::create_schema(&connection).await?;
+    zcash_vote::db::store_prop(&connection, "lwd", lwd).await?;
     zcash_vote::db::store_prop(&connection, "url", url).await?;
     zcash_vote::db::store_prop(&connection, "election", &serde_json::to_string(&election).expect("election json")).await?;
     zcash_vote::db::store_prop(&connection, "key", seed).await?;

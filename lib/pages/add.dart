@@ -18,6 +18,7 @@ class AddPage extends StatefulWidget {
 class AddPageState extends State<AddPage> {
   final formKey = GlobalKey<FormBuilderState>();
   final urlController = TextEditingController();
+  final lwdController = TextEditingController(text: "https://zec.rocks");
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,15 @@ class AddPageState extends State<AddPage> {
                       icon: const Icon(Icons.qr_code),
                       onPressed: onScan)
                 ]),
+                FormBuilderTextField(
+                  name: "lwd",
+                  controller: lwdController,
+                  decoration: const InputDecoration(labelText: "Lightwallet URL"),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.url(),
+                  ]),
+                ),
                 FormBuilderTextField(
                   name: "seed",
                   decoration: const InputDecoration(labelText: "Wallet Seed"),
@@ -87,8 +97,9 @@ class AddPageState extends State<AddPage> {
 
     try {
       final url = urlController.text;
+      final lwd = lwdController.text;
       final seed = form.fields["seed"]?.value!;
-      await connectElection(url: url, seed: seed);
+      await connectElection(url: url, lwd: lwd, seed: seed);
       if (!mounted) return;
       GoRouter.of(context).pop();
     } on AnyhowException catch (e) {

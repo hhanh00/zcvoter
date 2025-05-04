@@ -14,8 +14,10 @@ Future<void> createDirectoryDb({required String directory}) =>
     RustLib.instance.api
         .crateApiElectionCreateDirectoryDb(directory: directory);
 
-Future<String> connectElection({required String url, required String seed}) =>
-    RustLib.instance.api.crateApiElectionConnectElection(url: url, seed: seed);
+Future<String> connectElection(
+        {required String url, required String lwd, required String seed}) =>
+    RustLib.instance.api
+        .crateApiElectionConnectElection(url: url, lwd: lwd, seed: seed);
 
 Future<List<ElectionRec>> listElections() =>
     RustLib.instance.api.crateApiElectionListElections();

@@ -10,9 +10,9 @@ pub async fn create_directory_db(directory: &str) -> Result<()> {
 }
 
 #[frb]
-pub async fn connect_election(url: &str, seed: &str) -> Result<String> {
+pub async fn connect_election(url: &str, lwd: &str, seed: &str) -> Result<String> {
     let directory = get_directory_connection().await?;
-    crate::election::connect_election(&directory, url, seed).await
+    crate::election::connect_election(&directory, url, lwd, seed).await
 }
 
 #[frb]
