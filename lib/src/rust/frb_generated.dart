@@ -81,7 +81,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
 abstract class RustLibApi extends BaseApi {
   Future<String> crateApiElectionConnectElection(
-      {required String url, required String seed});
+      {required String url, required String lwd, required String seed});
 
   Future<void> crateApiElectionCreateDirectoryDb({required String directory});
 
@@ -104,11 +104,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<String> crateApiElectionConnectElection(
-      {required String url, required String seed}) {
+      {required String url, required String lwd, required String seed}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(url, serializer);
+        sse_encode_String(lwd, serializer);
         sse_encode_String(seed, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 1, port: port_);
@@ -118,7 +119,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiElectionConnectElectionConstMeta,
-      argValues: [url, seed],
+      argValues: [url, lwd, seed],
       apiImpl: this,
     ));
   }
@@ -126,7 +127,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiElectionConnectElectionConstMeta =>
       const TaskConstMeta(
         debugName: "connect_election",
-        argNames: ["url", "seed"],
+        argNames: ["url", "lwd", "seed"],
       );
 
   @override

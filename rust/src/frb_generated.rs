@@ -68,13 +68,15 @@ fn wire__crate__api__election__connect_election_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_url = <String>::sse_decode(&mut deserializer);
+            let api_lwd = <String>::sse_decode(&mut deserializer);
             let api_seed = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
                         let output_ok =
-                            crate::api::election::connect_election(&api_url, &api_seed).await?;
+                            crate::api::election::connect_election(&api_url, &api_lwd, &api_seed)
+                                .await?;
                         Ok(output_ok)
                     })()
                     .await,
