@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.2.0...zcvoter-v1.3.0) (2025-05-04)
+
+
+### Features
+
+* synchronize internal accounts too ([#11](https://github.com/hhanh00/zcvoter/issues/11)) ([6329ba1](https://github.com/hhanh00/zcvoter/commit/6329ba14be229bd47c5ee316473a98818ce7f052))
+
 ## [1.2.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.1.1...zcvoter-v1.2.0) (2025-05-04)
 
 
