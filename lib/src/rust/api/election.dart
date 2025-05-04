@@ -22,8 +22,30 @@ Future<String> connectElection(
 Future<List<ElectionRec>> listElections() =>
     RustLib.instance.api.crateApiElectionListElections();
 
+Future<ElectionData> getElection({required String hash}) =>
+    RustLib.instance.api.crateApiElectionGetElection(hash: hash);
+
 bool isValidSeed({required String seed}) =>
     RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
+
+@freezed
+class Answer with _$Answer {
+  const factory Answer({
+    required String address,
+    required String value,
+  }) = _Answer;
+}
+
+@freezed
+class ElectionData with _$ElectionData {
+  const factory ElectionData({
+    required String name,
+    required int startHeight,
+    required int endHeight,
+    required String question,
+    required List<Answer> answers,
+  }) = _ElectionData;
+}
 
 @freezed
 class ElectionRec with _$ElectionRec {

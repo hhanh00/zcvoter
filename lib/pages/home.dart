@@ -43,9 +43,7 @@ class HomePageState extends State<HomePage> with RouteAware {
       appBar: AppBar(
         title: const Text('Elections'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: onAddElection)
+          IconButton(icon: const Icon(Icons.add), onPressed: onAddElection)
         ],
       ),
       body: ListView.builder(
@@ -55,6 +53,9 @@ class HomePageState extends State<HomePage> with RouteAware {
           return ListTile(
             title: Text(election.name),
             subtitle: Text(election.question),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () =>
+                GoRouter.of(context).push("/election", extra: election.hash),
           );
         },
       ),
