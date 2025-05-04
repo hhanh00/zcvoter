@@ -1,0 +1,14 @@
+- [ ] prevent double sync
+- [ ] show modal message during sync
+- [ ] sync internal address
+    - [ ] update notes table
+    - [ ] try decrypt internal key
+- [ ] sync cometbft
+- [ ] load vote history
+- [ ] filter delegations
+- [ ] periodic vote sync
+- [ ] vote page
+- [ ] build vote
+- [ ] submit
+- [ ] delegate form
+
