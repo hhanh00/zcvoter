@@ -2,6 +2,7 @@ use zcash_protocol::consensus::Network;
 
 pub mod directory;
 pub mod election;
+pub mod sync;
 pub mod api;
 mod frb_generated;
 

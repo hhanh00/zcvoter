@@ -23,7 +23,7 @@ abstract class AppStoreBase with Store {
   }
 
   @action
-  Future<void> synchronize() async {
+  Future<void> refDataSynchronize() async {
     if (await isRefdataLoaded(hash: id!)) return;
 
     final syncProgress = electionSynchronize(hash: id!);
@@ -47,5 +47,20 @@ abstract class AppStoreBase with Store {
       );
       height = null;
     });
+  }
+
+  @action
+  Future<void> ballotSynchronize() async {
+    await ballotSync(hash: id!);
+    toastification.show(
+      title: Text("Ballot Sync"),
+      description: Text("Ballot sync complete"),
+    );
+  }
+
+  @action
+  Future<void> synchronize() async {
+    await refDataSynchronize();
+    await ballotSynchronize();
   }
 }

@@ -3,7 +3,7 @@
 - [x] sync internal address
     - [x] update notes table
     - [x] try decrypt internal key
-- [ ] sync cometbft
+- [x] sync cometbft
 - [ ] load vote history
 - [ ] filter delegations
 - [ ] periodic vote sync
