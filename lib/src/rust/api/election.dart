@@ -28,6 +28,9 @@ Future<ElectionData> getElection({required String hash}) =>
 bool isValidSeed({required String seed}) =>
     RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
 
+Stream<int> electionSynchronize({required String hash}) =>
+    RustLib.instance.api.crateApiElectionElectionSynchronize(hash: hash);
+
 @freezed
 class Answer with _$Answer {
   const factory Answer({

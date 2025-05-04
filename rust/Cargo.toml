@@ -30,15 +30,15 @@ reqwest = {version = "0.12", features = ["json", "rustls-tls"]}
 rustls = {version = "0.23", default-features = false, features = ["ring"]}
 libsqlite3-sys = { version = "0.28", features = ["bundled-sqlcipher-vendored-openssl"] }
 
-# bip39 = "2.1.0"
+bip39 = "2.1.0"
 # rayon = "1.10"
 # zcash_address = "0.7"
 # zcash_encoding = "0.3"
 # zcash_keys = {version = "0.8", features = ["sapling", "orchard", "transparent-inputs"]}
 # zcash_note_encryption = "0.4"
-# zcash_primitives = {version = "0.22", features = ["transparent-inputs"]}
+zcash_primitives = "0.22"
 # zcash_proofs = {version = "0.22", features = ["bundled-prover"]}
-# zcash_protocol = "0.5"
+zcash_protocol = "0.5"
 # zcash_transparent = {version = "0.2.3", features = ["transparent-inputs"]}
 # zip321 = "0.3"
 
