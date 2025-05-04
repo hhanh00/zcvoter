@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:zcvoter/router.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 
 class HomePage extends StatefulWidget {
@@ -8,16 +10,31 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with RouteAware {
   List<ElectionRec> elections = [];
 
   @override
   void initState() {
     super.initState();
-    Future(() async {
-      final elections = await listElections();
-      setState(() => this.elections = elections);
-    });
+    Future(_refresh);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    Future(_refresh);
   }
 
   @override
@@ -44,5 +61,12 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  void onAddElection() async {}
+  void onAddElection() async {
+    await GoRouter.of(context).push('/add-election');
+  }
+
+  _refresh() async {
+    final elections = await listElections();
+    setState(() => this.elections = elections);
+  }
 }

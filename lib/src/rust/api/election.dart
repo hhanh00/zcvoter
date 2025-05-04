@@ -14,11 +14,14 @@ Future<void> createDirectoryDb({required String directory}) =>
     RustLib.instance.api
         .crateApiElectionCreateDirectoryDb(directory: directory);
 
-Future<void> connectElection({required String url}) =>
-    RustLib.instance.api.crateApiElectionConnectElection(url: url);
+Future<String> connectElection({required String url, required String seed}) =>
+    RustLib.instance.api.crateApiElectionConnectElection(url: url, seed: seed);
 
 Future<List<ElectionRec>> listElections() =>
     RustLib.instance.api.crateApiElectionListElections();
+
+bool isValidSeed({required String seed}) =>
+    RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
 
 @freezed
 class ElectionRec with _$ElectionRec {

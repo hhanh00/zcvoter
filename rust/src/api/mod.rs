@@ -6,15 +6,24 @@ use sqlx::SqlitePool;
 pub mod init;
 pub mod election;
 
-pub(crate) async fn get_directory_connection() -> Result<SqlitePool> {
+async fn get_connection(basename: &str) -> Result<SqlitePool> {
     let db_path = {
         let db_path = DB_PATH.lock().unwrap();
         db_path.clone()
     };
     let options = sqlx::sqlite::SqliteConnectOptions::new()
-        .filename(format!("{}/directory.db", db_path));
+        .filename(format!("{}/{}.db", db_path, basename))
+        .create_if_missing(true);
     let pool = SqlitePool::connect_with(options).await?;
     Ok(pool)
+}
+
+pub(crate) async fn get_directory_connection() -> Result<SqlitePool> {
+    get_connection("directory").await
+}
+
+pub(crate) async fn get_election_connection(hash: &str) -> Result<SqlitePool> {
+    get_connection(hash).await
 }
 
 lazy_static::lazy_static! {
