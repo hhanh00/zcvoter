@@ -28,6 +28,9 @@ Future<ElectionData> getElection({required String hash}) =>
 bool isValidSeed({required String seed}) =>
     RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
 
+Future<bool> isRefdataLoaded({required String hash}) =>
+    RustLib.instance.api.crateApiElectionIsRefdataLoaded(hash: hash);
+
 Stream<int> electionSynchronize({required String hash}) =>
     RustLib.instance.api.crateApiElectionElectionSynchronize(hash: hash);
 

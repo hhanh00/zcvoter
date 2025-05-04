@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
+import 'package:toastification/toastification.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 
 part 'store.g.dart';
@@ -22,13 +24,27 @@ abstract class AppStoreBase with Store {
 
   @action
   Future<void> synchronize() async {
+    if (await isRefdataLoaded(hash: id!)) return;
+
     final syncProgress = electionSynchronize(hash: id!);
-    print("Syncing...");
+    toastification.show(
+      title: Text("Synchronization"),
+      description: Text("Downloading blockchain data..."),
+    );
     syncProgress.listen((h) {
-      print("Sync progress: $h");
       height = h;
+    }, onError: (e) {
+      toastification.show(
+        title: Text("Synchronization"),
+        description: Text("Error: $e"),
+      );
+      height = null;
+      Future.delayed(const Duration(seconds: 10), synchronize);
     }, onDone: () {
-      print("Sync done");
+      toastification.show(
+        title: Text("Synchronization"),
+        description: Text("Download complete"),
+      );
       height = null;
     });
   }
