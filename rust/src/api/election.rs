@@ -71,7 +71,7 @@ pub fn is_valid_seed(seed: &str) -> bool {
 
 // #[frb]
 pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Result<()> {
-    let (tx_progress, mut rx) = channel::<u32>();
+    let (tx_progress, rx) = channel::<u32>();
     tokio::spawn(async move {
         while let Ok(v) = rx.recv() {
             progress.add(v).expect("progress sink");
