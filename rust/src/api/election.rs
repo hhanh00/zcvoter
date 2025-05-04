@@ -1,7 +1,12 @@
+use std::{str::FromStr, sync::mpsc::channel};
+
 use anyhow::Result;
+use bip39::Mnemonic;
 use flutter_rust_bridge::frb;
 use sqlx::{sqlite::SqliteRow, Row};
 use zcash_vote::db::load_prop;
+
+use crate::frb_generated::StreamSink;
 
 use super::{get_connection, get_directory_connection};
 
@@ -37,7 +42,7 @@ pub async fn list_elections() -> Result<Vec<ElectionRec>> {
     Ok(elections)
 }
 
-// #[frb]
+#[frb]
 pub async fn get_election(hash: &str) -> Result<ElectionData> {
     let connection = get_connection(hash).await?;
     let election_string = load_prop(&connection, "election").await?.expect("election");
@@ -61,7 +66,22 @@ pub async fn get_election(hash: &str) -> Result<ElectionData> {
 
 #[frb(sync)]
 pub fn is_valid_seed(seed: &str) -> bool {
-    true
+    Mnemonic::from_str(seed).is_ok()
+}
+
+// #[frb]
+pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Result<()> {
+    let (tx_progress, mut rx) = channel::<u32>();
+    tokio::spawn(async move {
+        while let Ok(v) = rx.recv() {
+            progress.add(v).expect("progress sink");
+        }
+    });
+    let connection = get_connection(hash).await?;
+    crate::election::synchronize(
+        &connection,
+        tx_progress,
+    ).await
 }
 
 #[frb(dart_metadata = ("freezed"))]
