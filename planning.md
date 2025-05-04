@@ -1,8 +1,8 @@
-- [ ] prevent double sync
+- [x] prevent double sync
 - [ ] show modal message during sync
-- [ ] sync internal address
-    - [ ] update notes table
-    - [ ] try decrypt internal key
+- [x] sync internal address
+    - [x] update notes table
+    - [x] try decrypt internal key
 - [ ] sync cometbft
 - [ ] load vote history
 - [ ] filter delegations

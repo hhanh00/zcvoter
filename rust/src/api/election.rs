@@ -1,3 +1,4 @@
+use core::sync;
 use std::{str::FromStr, sync::mpsc::channel};
 
 use anyhow::Result;
@@ -6,7 +7,7 @@ use flutter_rust_bridge::frb;
 use sqlx::{sqlite::SqliteRow, Row};
 use zcash_vote::db::load_prop;
 
-use crate::frb_generated::StreamSink;
+use crate::{election::SYNC_MUTEX, frb_generated::StreamSink};
 
 use super::{get_connection, get_directory_connection};
 
@@ -69,7 +70,17 @@ pub fn is_valid_seed(seed: &str) -> bool {
     Mnemonic::from_str(seed).is_ok()
 }
 
-// #[frb]
+#[frb]
+pub async fn is_refdata_loaded(hash: &str) -> Result<bool> {
+    let connection = get_connection(hash).await?;
+    let election = crate::election::get_election(&connection).await?;
+    let end_height = election.end_height;
+    let sync_height = load_prop(&connection, "height").await?.unwrap_or_default();
+    let sync_height = u32::from_str(&sync_height).expect("sync height");
+    Ok(end_height == sync_height)
+}
+
+#[frb]
 pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Result<()> {
     let (tx_progress, rx) = channel::<u32>();
     tokio::spawn(async move {
