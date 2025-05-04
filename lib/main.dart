@@ -12,8 +12,6 @@ Future<void> main() async {
   final dbDir = await getApplicationDocumentsDirectory();
   await createDirectoryDb(directory: dbDir.path);
 
-  await connectElection(url: "http://zebra2.zcash-infra.com:8000/election/f25446783de9082fa00cb5754a129fedb7f1d61ec6c144252f48077ac641e822");
-
   runApp(MaterialApp.router(
       routerConfig: router,
       themeMode: ThemeMode.system,
