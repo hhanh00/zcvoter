@@ -1,4 +1,3 @@
-use core::sync;
 use std::{str::FromStr, sync::mpsc::channel};
 
 use anyhow::Result;
@@ -7,7 +6,7 @@ use flutter_rust_bridge::frb;
 use sqlx::{sqlite::SqliteRow, Row};
 use zcash_vote::db::load_prop;
 
-use crate::{election::SYNC_MUTEX, frb_generated::StreamSink};
+use crate::frb_generated::StreamSink;
 
 use super::{get_connection, get_directory_connection};
 
@@ -93,6 +92,12 @@ pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Resu
         &connection,
         tx_progress,
     ).await
+}
+
+#[frb]
+pub async fn ballot_sync(hash: &str) -> Result<()> {
+    let connection = get_connection(hash).await?;
+    crate::sync::ballot_sync(&connection).await
 }
 
 #[frb(dart_metadata = ("freezed"))]

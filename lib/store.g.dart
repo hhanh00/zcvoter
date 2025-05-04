@@ -55,6 +55,23 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
+  late final _$refDataSynchronizeAsyncAction =
+      AsyncAction('AppStoreBase.refDataSynchronize', context: context);
+
+  @override
+  Future<void> refDataSynchronize() {
+    return _$refDataSynchronizeAsyncAction
+        .run(() => super.refDataSynchronize());
+  }
+
+  late final _$ballotSynchronizeAsyncAction =
+      AsyncAction('AppStoreBase.ballotSynchronize', context: context);
+
+  @override
+  Future<void> ballotSynchronize() {
+    return _$ballotSynchronizeAsyncAction.run(() => super.ballotSynchronize());
+  }
+
   late final _$synchronizeAsyncAction =
       AsyncAction('AppStoreBase.synchronize', context: context);
 
