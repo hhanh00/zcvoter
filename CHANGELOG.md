@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.4.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.3.0...zcvoter-v1.4.0) (2025-05-05)
+
+
+### Features
+
+* autosync every 15s ([#16](https://github.com/hhanh00/zcvoter/issues/16)) ([a7e7f17](https://github.com/hhanh00/zcvoter/commit/a7e7f17fb24cbf9f1d57146c17e28a01c999892f))
+* ballot sync ([#13](https://github.com/hhanh00/zcvoter/issues/13)) ([045f50d](https://github.com/hhanh00/zcvoter/commit/045f50d31c392219d1eae17c7a5f3aacc38b3627))
+* poll for ballot confirmation ([#15](https://github.com/hhanh00/zcvoter/issues/15)) ([c1e0c29](https://github.com/hhanh00/zcvoter/commit/c1e0c29e7286bd1b547cba03b5901bd194342274))
+* prepare ballot ([#19](https://github.com/hhanh00/zcvoter/issues/19)) ([eba96e4](https://github.com/hhanh00/zcvoter/commit/eba96e4acc475df47aac5b4ca4d09bc020bb06fe))
+* show votes available ([#18](https://github.com/hhanh00/zcvoter/issues/18)) ([8267019](https://github.com/hhanh00/zcvoter/commit/8267019236ac75f5239cca9fc7a7fd2344890bf0))
+* submit vote ([eba96e4](https://github.com/hhanh00/zcvoter/commit/eba96e4acc475df47aac5b4ca4d09bc020bb06fe))
+
+
+### Bug Fixes
+
+* initial sync ([8be3e22](https://github.com/hhanh00/zcvoter/commit/8be3e22493767c5828402d3e4f4b2948cb306815))
+* navigation blinking ([8be3e22](https://github.com/hhanh00/zcvoter/commit/8be3e22493767c5828402d3e4f4b2948cb306815))
+
 ## [1.3.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.2.0...zcvoter-v1.3.0) (2025-05-04)
 
 
