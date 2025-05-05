@@ -34,6 +34,9 @@ Future<bool> isRefdataLoaded({required String hash}) =>
 Stream<int> electionSynchronize({required String hash}) =>
     RustLib.instance.api.crateApiElectionElectionSynchronize(hash: hash);
 
+Future<bool> isBallotSynced({required String hash}) =>
+    RustLib.instance.api.crateApiElectionIsBallotSynced(hash: hash);
+
 Future<void> ballotSync({required String hash}) =>
     RustLib.instance.api.crateApiElectionBallotSync(hash: hash);
 

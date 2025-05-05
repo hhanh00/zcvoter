@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:toastification/toastification.dart';
@@ -41,6 +43,7 @@ abstract class AppStoreBase with Store {
       height = null;
       Future.delayed(const Duration(seconds: 10), synchronize);
     }, onDone: () {
+      toastification.dismissAll();
       toastification.show(
         title: Text("Synchronization"),
         description: Text("Download complete"),
@@ -51,10 +54,13 @@ abstract class AppStoreBase with Store {
 
   @action
   Future<void> ballotSynchronize() async {
+    if (await isBallotSynced(hash: id!)) return;
+
     await ballotSync(hash: id!);
     toastification.show(
       title: Text("Ballot Sync"),
       description: Text("Ballot sync complete"),
+      autoCloseDuration: Durations.extralong1,
     );
   }
 
@@ -62,5 +68,28 @@ abstract class AppStoreBase with Store {
   Future<void> synchronize() async {
     await refDataSynchronize();
     await ballotSynchronize();
+  }
+
+  int nretries = 0;
+  Timer? pollTimer;
+
+  @action
+  Future<void> pollForConfirmation() async {
+    nretries = 10;
+    pollTimer = Timer.periodic(const Duration(seconds: 15), (timer) async {
+      if (await isBallotSynced(hash: id!) && nretries > 0) {
+        nretries--;
+        return;
+      }
+      pollTimer?.cancel();
+      pollTimer = null;
+      if (nretries == 0)
+        toastification.show(
+          title: Text("Vote/Delegation Submission"),
+          description: Text("Error: No confirmation received"),
+        );
+      else
+        await ballotSynchronize();
+    });
   }
 }

@@ -80,6 +80,15 @@ mixin _$AppStore on AppStoreBase, Store {
     return _$synchronizeAsyncAction.run(() => super.synchronize());
   }
 
+  late final _$pollForConfirmationAsyncAction =
+      AsyncAction('AppStoreBase.pollForConfirmation', context: context);
+
+  @override
+  Future<void> pollForConfirmation() {
+    return _$pollForConfirmationAsyncAction
+        .run(() => super.pollForConfirmation());
+  }
+
   @override
   String toString() {
     return '''
