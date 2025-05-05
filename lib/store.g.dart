@@ -137,6 +137,15 @@ mixin _$AppStore on AppStoreBase, Store {
     return _$cancelAutoSyncAsyncAction.run(() => super.cancelAutoSync());
   }
 
+  late final _$updateAvailableVotesAsyncAction =
+      AsyncAction('AppStoreBase.updateAvailableVotes', context: context);
+
+  @override
+  Future<void> updateAvailableVotes() {
+    return _$updateAvailableVotesAsyncAction
+        .run(() => super.updateAvailableVotes());
+  }
+
   @override
   String toString() {
     return '''

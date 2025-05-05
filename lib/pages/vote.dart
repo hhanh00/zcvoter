@@ -3,6 +3,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:zcvoter/main.dart';
+import 'package:zcvoter/pages/home.dart';
+import 'package:zcvoter/src/rust/api/election.dart';
 import 'package:zcvoter/store.dart';
 
 class VotePage extends StatefulWidget {
@@ -15,6 +18,12 @@ class VotePage extends StatefulWidget {
 class VotePageState extends State<VotePage> {
   final formKey = GlobalKey<FormBuilderState>();
   final voteController = TextEditingController(text: "0");
+
+  @override
+  void initState() {
+    super.initState();
+    Future(appStore.updateAvailableVotes);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +66,9 @@ class VotePageState extends State<VotePage> {
                         FormBuilderRadioGroup<String>(
                             name: "choice",
                             orientation: OptionsOrientation.vertical,
-                            options: options),
+                            options: options,
+                            validator: FormBuilderValidators.required(),
+                            ),
                         Gap(16),
                         OverflowBar(children: [
                           IconButton.filled(
@@ -75,5 +86,18 @@ class VotePageState extends State<VotePage> {
     );
   }
 
-  void onVote() async {}
+  void onVote() async {
+    final form = formKey.currentState!;
+    if (!form.saveAndValidate()) return;
+
+    final voteString = form.value["vote"] as String;
+    final vote = int.parse(voteString);
+    final choice = form.value["choice"] as String;
+    logger.i("Vote: $vote for $choice");
+
+    await voteElection(
+        hash: appStore.id!,
+        address: choice,
+        amount: BigInt.from(vote * ZatsPerVote));
+  }
 }

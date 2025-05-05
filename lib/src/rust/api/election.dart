@@ -25,6 +25,13 @@ Future<List<ElectionRec>> listElections() =>
 Future<ElectionData> getElection({required String hash}) =>
     RustLib.instance.api.crateApiElectionGetElection(hash: hash);
 
+Future<String> voteElection(
+        {required String hash,
+        required String address,
+        required BigInt amount}) =>
+    RustLib.instance.api.crateApiElectionVoteElection(
+        hash: hash, address: address, amount: amount);
+
 bool isValidSeed({required String seed}) =>
     RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
 
@@ -39,6 +46,9 @@ Future<bool> isBallotSynced({required String hash}) =>
 
 Future<void> ballotSync({required String hash}) =>
     RustLib.instance.api.crateApiElectionBallotSync(hash: hash);
+
+Future<BigInt> votesAvailable({required String hash}) =>
+    RustLib.instance.api.crateApiElectionVotesAvailable(hash: hash);
 
 @freezed
 class Answer with _$Answer {
