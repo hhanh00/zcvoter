@@ -7,6 +7,7 @@ import 'package:zcvoter/main.dart';
 import 'package:zcvoter/pages/home.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 import 'package:zcvoter/store.dart';
+import 'package:zcvoter/utils.dart';
 
 class VotePage extends StatefulWidget {
   const VotePage({super.key});
@@ -95,9 +96,14 @@ class VotePageState extends State<VotePage> {
     final choice = form.value["choice"] as String;
     logger.i("Vote: $vote for $choice");
 
-    await voteElection(
+    final voteHash = await voteElection(
         hash: appStore.id!,
         address: choice,
         amount: BigInt.from(vote * ZatsPerVote));
+    logger.i("Vote hash: $voteHash");
+
+    if (!mounted) return;
+    await showMessage(context, title: "Vote submitted",
+        "Vote hash: $voteHash");
   }
 }

@@ -1,13 +1,15 @@
 use anyhow::Result;
 use bip39::Mnemonic;
-use orchard::keys::{FullViewingKey, SpendingKey};
-use sqlx::SqlitePool;
+use orchard::{keys::{FullViewingKey, SpendingKey}, vote::{Ballot, Circuit, ProvingKey, VerifyingKey}};
+use rand_core::OsRng;
+use reqwest::header::CONTENT_TYPE;
+use sqlx::{SqliteConnection, SqlitePool};
 use std::sync::mpsc::Sender;
 use tokio::sync::Mutex;
-use tracing::info;
+use tracing::{info, span, Level};
 use zcash_primitives::zip32::AccountId;
 use zcash_protocol::consensus::NetworkConstants;
-use zcash_vote::{db::load_prop, download::download_reference_data, election::Election};
+use zcash_vote::{address::VoteAddress, db::{list_notes, load_prop}, download::download_reference_data, election::Election, trees::{list_cmxs, list_nf_ranges}};
 
 use crate::NETWORK;
 
@@ -18,6 +20,7 @@ pub async fn connect_election(
     seed: &str,
 ) -> Result<String> {
     let rep = reqwest::get(url).await?.error_for_status()?;
+    let mut connection = connection.acquire().await?;
 
     let election: Election = rep.json().await?;
     tracing::debug!("Election: {:?}", &election);
@@ -32,32 +35,43 @@ pub async fn connect_election(
     .bind(&election.id())
     .bind(&election.name)
     .bind(&election.question)
-    .execute(connection)
+    .execute(&mut *connection)
     .await?;
 
     let connection = crate::api::get_election_connection(&election.id()).await?;
-
     zcash_vote::db::create_schema(&connection).await?;
-    zcash_vote::db::store_prop(&connection, "lwd", lwd).await?;
-    zcash_vote::db::store_prop(&connection, "url", url).await?;
+    let mut connection = connection.acquire().await?;
+
+    zcash_vote::db::store_prop(&mut connection, "lwd", lwd).await?;
+    zcash_vote::db::store_prop(&mut connection, "url", url).await?;
     zcash_vote::db::store_prop(
-        &connection,
+        &mut connection,
         "election",
         &serde_json::to_string(&election).expect("election json"),
     )
     .await?;
-    zcash_vote::db::store_prop(&connection, "key", seed).await?;
+    zcash_vote::db::store_prop(&mut connection, "key", seed).await?;
+
+    sqlx::query(
+        r#"CREATE TABLE IF NOT EXISTS votes(
+        id_vote INTEGER PRIMARY KEY,
+        hash TEXT NOT NULL,
+        address TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        UNIQUE (hash))"#)
+    .execute(&mut *connection).await?;
 
     Ok(election.id())
 }
 
-pub async fn synchronize(connection: &SqlitePool, tx_progress: Sender<u32>) -> Result<()> {
+pub async fn synchronize(pool: &SqlitePool, tx_progress: Sender<u32>) -> Result<()> {
+    let mut connection = pool.acquire().await?;
     if let Ok(_guard) = SYNC_MUTEX.try_lock() {
-        let election = get_election(connection).await?;
-        let fvk = get_fvk(connection).await?;
-        let lwd_url = load_prop(connection, "lwd").await?.expect("lwd");
-        trim_data(connection).await?;
-        download_reference_data(connection, 0, &election, Some(fvk), &lwd_url, move |h| {
+        let election = get_election(&mut connection).await?;
+        let fvk: FullViewingKey = get_fvk(&mut connection).await?;
+        let lwd_url = load_prop(&mut connection, "lwd").await?.expect("lwd");
+        trim_data(&mut connection).await?;
+        download_reference_data(&pool, 0, &election, Some(fvk), &lwd_url, move |h| {
             info!("Progress: {}", h);
             tx_progress.send(h).expect("send progress");
         })
@@ -66,36 +80,41 @@ pub async fn synchronize(connection: &SqlitePool, tx_progress: Sender<u32>) -> R
     Ok(())
 }
 
-pub async fn get_election(connection: &SqlitePool) -> Result<Election> {
-    let election_string = load_prop(&connection, "election").await?.expect("election");
+pub async fn get_election(connection: &mut SqliteConnection) -> Result<Election> {
+    let election_string = load_prop(connection, "election").await?.expect("election");
     let election: Election = serde_json::from_str(&election_string)?;
     Ok(election)
 }
 
-pub async fn get_fvk(connection: &SqlitePool) -> Result<FullViewingKey> {
-    let key = load_prop(&connection, "key").await?.expect("election");
+pub async fn get_sk(connection: &mut SqliteConnection) -> Result<SpendingKey> {
+    let key = load_prop(connection, "key").await?.expect("election");
     let mnemonic = Mnemonic::parse(&key)?;
     let seed = mnemonic.to_seed("");
     let sk = SpendingKey::from_zip32_seed(&seed, NETWORK.coin_type(), AccountId::ZERO)
         .expect("derive sk");
+    Ok(sk)
+}
+
+pub async fn get_fvk(connection: &mut SqliteConnection) -> Result<FullViewingKey> {
+    let sk = get_sk(connection).await?;
     let fvk = FullViewingKey::from(&sk);
     Ok(fvk)
 }
 
-pub async fn trim_data(connection: &SqlitePool) -> Result<()> {
+pub async fn trim_data(connection: &mut SqliteConnection) -> Result<()> {
     sqlx::query("DELETE FROM ballots")
-        .execute(connection)
+        .execute(&mut *connection)
         .await?;
     sqlx::query("DELETE FROM cmx_frontiers")
-        .execute(connection)
+        .execute(&mut *connection)
         .await?;
     sqlx::query("DELETE FROM cmx_roots")
-        .execute(connection)
+        .execute(&mut *connection)
         .await?;
-    sqlx::query("DELETE FROM cmxs").execute(connection).await?;
-    sqlx::query("DELETE FROM nfs").execute(connection).await?;
-    sqlx::query("DELETE FROM dnfs").execute(connection).await?;
-    sqlx::query("DELETE FROM notes").execute(connection).await?;
+    sqlx::query("DELETE FROM cmxs").execute(&mut *connection).await?;
+    sqlx::query("DELETE FROM nfs").execute(&mut *connection).await?;
+    sqlx::query("DELETE FROM dnfs").execute(&mut *connection).await?;
+    sqlx::query("DELETE FROM notes").execute(&mut *connection).await?;
 
     Ok(())
 }
@@ -109,11 +128,75 @@ pub async fn votes_available(connection: &SqlitePool) -> Result<u64> {
     Ok(votes.unwrap_or_default())
 }
 
-pub async fn vote_election(_connection: &SqlitePool, address: &str, amount: u64) -> Result<String> {
+pub async fn vote_election(pool: &SqlitePool, address: &str, amount: u64) -> Result<String> {
+    let span = span!(Level::INFO, "vote");
     info!("Vote election: {} {}", address, amount);
-    Ok("".to_string())
+    let vaddress = VoteAddress::decode(address)?;
+
+    span.in_scope(|| {
+        info!("Preparing proving keys");
+    });
+
+    let mut connection = pool.acquire().await?;
+    let election = get_election(&mut connection).await?;
+    let sk = get_sk(&mut connection).await?;
+    let fvk = get_fvk(&mut connection).await?;
+    let notes = list_notes(pool, 0, &fvk).await?;
+    let cmxs = list_cmxs(pool).await?;
+    let nfs = list_nf_ranges(pool).await?;
+    let ballot = orchard::vote::vote(
+        election.domain(),
+        election.signature_required,
+        Some(sk),
+        &fvk,
+        vaddress.0,
+        amount,
+        &notes,
+        &nfs,
+        &cmxs,
+        &mut OsRng,
+        &BALLOT_PK,
+        &BALLOT_VK,
+    )?;
+    let ballot_hash = submit_ballot(pool, address, amount, &ballot).await?;
+
+    Ok(ballot_hash)
+}
+
+pub async fn submit_ballot(
+    pool: &SqlitePool,
+    address: &str,
+    amount: u64,
+    ballot: &Ballot,
+) -> Result<String> {
+    sqlx::query(
+        r#"
+        INSERT INTO votes (hash, address, amount)
+        VALUES (?, ?, ?) ON CONFLICT(hash) DO NOTHING"#)
+    .bind(ballot.data.sighash()?)
+    .bind(address)
+    .bind(amount as i64)
+    .execute(pool)
+    .await?;
+
+    let mut connection = pool.acquire().await?;
+    let client = reqwest::Client::new();
+    let base_url = load_prop(&mut connection, "url").await?.expect("Missing URL");
+    let url = format!("{}/ballot", base_url);
+    let rep = client
+        .post(url)
+        .header(CONTENT_TYPE, "application/json")
+        .json(&ballot)
+        .send()
+        .await?;
+    let rep = rep.error_for_status()?;
+    let hash = rep.text().await?;
+
+    Ok(hash)
 }
 
 lazy_static::lazy_static! {
     pub static ref SYNC_MUTEX: Mutex<()> = Mutex::new(());
+    pub static ref BALLOT_PK: ProvingKey<Circuit> = ProvingKey::build();
+    pub static ref BALLOT_VK: VerifyingKey<Circuit> = VerifyingKey::build();
 }

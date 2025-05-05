@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
+import 'package:zcvoter/store.dart';
 
 import 'router.dart';
 import 'src/rust/frb_generated.dart';
@@ -13,6 +14,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await RustLib.init();
+  await appStore.init();
   final dbDir = await getApplicationDocumentsDirectory();
   await createDirectoryDb(directory: dbDir.path);
 

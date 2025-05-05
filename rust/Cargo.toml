@@ -21,7 +21,7 @@ serde = "1.0"
 serde_json = "1.0"
 
 # rand = "0.9.0"
-# rand_core = "0.6"
+rand_core = "0.6"
 
 futures = "0.3"
 sqlx = {version = "0.8", features = ["runtime-tokio", "sqlite", "macros", "migrate"]}
@@ -42,7 +42,7 @@ zcash_protocol = "0.5"
 # zcash_transparent = {version = "0.2.3", features = ["transparent-inputs"]}
 # zip321 = "0.3"
 
-zcash-vote = {git = "https://github.com/hhanh00/zcash-vote", rev = "270ec3046acb61ac06de4fb8ea85a83047620d4a" }
+zcash-vote = {git = "https://github.com/hhanh00/zcash-vote", rev = "abb5d352732d5712ac0e5d672b5e2ff7f02ec9e9" }
 #zcash-vote = {path = "../../zcash-vote"}
 
 orchard = {version = "0.11", features = ["vote"]}
@@ -76,4 +76,5 @@ unexpected_cfgs = {level = "warn", check-cfg = ['cfg(frb_expand)']}
 tonic-build = "0.13"
 
 [patch.crates-io]
-orchard = {git = "https://github.com/hhanh00/orchard", rev = "09d63ba" }
+orchard = {git = "https://github.com/hhanh00/orchard", rev = "75448e6" }
+#orchard = {path = "../../orchard"}

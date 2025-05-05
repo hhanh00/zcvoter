@@ -6,7 +6,7 @@ use sqlx::SqlitePool;
 pub mod init;
 pub mod election;
 
-async fn get_connection(basename: &str) -> Result<SqlitePool> {
+async fn get_pool(basename: &str) -> Result<SqlitePool> {
     let db_path = {
         let db_path = DB_PATH.lock().unwrap();
         db_path.clone()
@@ -19,11 +19,11 @@ async fn get_connection(basename: &str) -> Result<SqlitePool> {
 }
 
 pub(crate) async fn get_directory_connection() -> Result<SqlitePool> {
-    get_connection("directory").await
+    get_pool("directory").await
 }
 
 pub(crate) async fn get_election_connection(hash: &str) -> Result<SqlitePool> {
-    get_connection(hash).await
+    get_pool(hash).await
 }
 
 lazy_static::lazy_static! {
