@@ -95,6 +95,13 @@ pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Resu
 }
 
 #[frb]
+pub async fn is_ballot_synced(hash: &str) -> Result<bool> {
+    let connection = get_connection(hash).await?;
+    let (c, n) = crate::sync::ballot_sync_status(&connection).await?;
+    Ok(c == n)
+}
+
+#[frb]
 pub async fn ballot_sync(hash: &str) -> Result<()> {
     let connection = get_connection(hash).await?;
     crate::sync::ballot_sync(&connection).await
