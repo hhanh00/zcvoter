@@ -2181,7 +2181,7 @@ dependencies = [
 [[package]]
 name = "orchard"
 version = "0.11.0"
-source = "git+https://github.com/hhanh00/orchard?rev=09d63ba#09d63baace476bd79d3defc7e68d59033465c13b"
+source = "git+https://github.com/hhanh00/orchard?rev=75448e6#75448e671f56f7c6d3f29502f5a26370a056b86c"
 dependencies = [
  "aes",
  "bitvec",
@@ -2920,6 +2920,7 @@ dependencies = [
  "libsqlite3-sys",
  "log",
  "orchard",
+ "rand_core 0.6.4",
  "reqwest",
  "rustls 0.23.26",
  "serde",
@@ -4645,7 +4646,6 @@ dependencies = [
 [[package]]
 name = "zcash-vote"
 version = "0.1.1"
-source = "git+https://github.com/hhanh00/zcash-vote?rev=270ec3046acb61ac06de4fb8ea85a83047620d4a#270ec3046acb61ac06de4fb8ea85a83047620d4a"
 dependencies = [
  "anyhow",
  "bech32 0.9.1",

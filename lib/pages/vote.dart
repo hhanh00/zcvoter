@@ -95,9 +95,10 @@ class VotePageState extends State<VotePage> {
     final choice = form.value["choice"] as String;
     logger.i("Vote: $vote for $choice");
 
-    await voteElection(
+    final voteHash = await voteElection(
         hash: appStore.id!,
         address: choice,
         amount: BigInt.from(vote * ZatsPerVote));
+    logger.i("Vote hash: $voteHash");
   }
 }

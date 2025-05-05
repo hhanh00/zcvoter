@@ -1,13 +1,14 @@
 use anyhow::Result;
 use bip39::Mnemonic;
-use orchard::keys::{FullViewingKey, SpendingKey};
+use orchard::{keys::{FullViewingKey, SpendingKey}, vote::{Circuit, ProvingKey, VerifyingKey}};
+use rand_core::OsRng;
 use sqlx::SqlitePool;
 use std::sync::mpsc::Sender;
 use tokio::sync::Mutex;
-use tracing::info;
+use tracing::{info, span, Level};
 use zcash_primitives::zip32::AccountId;
 use zcash_protocol::consensus::NetworkConstants;
-use zcash_vote::{db::load_prop, download::download_reference_data, election::Election};
+use zcash_vote::{address::VoteAddress, db::{list_notes, load_prop}, download::download_reference_data, election::Election, trees::{list_cmxs, list_nf_ranges}};
 
 use crate::NETWORK;
 
@@ -72,12 +73,17 @@ pub async fn get_election(connection: &SqlitePool) -> Result<Election> {
     Ok(election)
 }
 
-pub async fn get_fvk(connection: &SqlitePool) -> Result<FullViewingKey> {
+pub async fn get_sk(connection: &SqlitePool) -> Result<SpendingKey> {
     let key = load_prop(&connection, "key").await?.expect("election");
     let mnemonic = Mnemonic::parse(&key)?;
     let seed = mnemonic.to_seed("");
     let sk = SpendingKey::from_zip32_seed(&seed, NETWORK.coin_type(), AccountId::ZERO)
         .expect("derive sk");
+    Ok(sk)
+}
+
+pub async fn get_fvk(connection: &SqlitePool) -> Result<FullViewingKey> {
+    let sk = get_sk(connection).await?;
     let fvk = FullViewingKey::from(&sk);
     Ok(fvk)
 }
@@ -109,11 +115,41 @@ pub async fn votes_available(connection: &SqlitePool) -> Result<u64> {
     Ok(votes.unwrap_or_default())
 }
 
-pub async fn vote_election(_connection: &SqlitePool, address: &str, amount: u64) -> Result<String> {
+pub async fn vote_election(connection: &SqlitePool, address: &str, amount: u64) -> Result<String> {
+    let span = span!(Level::INFO, "vote");
     info!("Vote election: {} {}", address, amount);
-    Ok("".to_string())
+    let vaddress = VoteAddress::decode(address)?;
+
+    span.in_scope(|| {
+        info!("Preparing proving keys");
+    });
+
+    let election = get_election(connection).await?;
+    let sk = get_sk(connection).await?;
+    let fvk = get_fvk(connection).await?;
+    let notes = list_notes(connection, 0, &fvk).await?;
+    let cmxs = list_cmxs(&connection).await?;
+    let nfs = list_nf_ranges(&connection).await?;
+    let ballot = orchard::vote::vote(
+        election.domain(),
+        election.signature_required,
+        Some(sk),
+        &fvk,
+        vaddress.0,
+        amount,
+        &notes,
+        &nfs,
+        &cmxs,
+        &mut OsRng,
+        &BALLOT_PK,
+        &BALLOT_VK,
+    )?;
+    let ballot_hash = ballot.data.sighash()?;
+    Ok(hex::encode(&ballot_hash))
 }
 
 lazy_static::lazy_static! {
     pub static ref SYNC_MUTEX: Mutex<()> = Mutex::new(());
+    pub static ref BALLOT_PK: ProvingKey<Circuit> = ProvingKey::build();
+    pub static ref BALLOT_VK: VerifyingKey<Circuit> = VerifyingKey::build();
 }

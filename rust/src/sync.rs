@@ -3,7 +3,7 @@ use orchard::{
     keys::{FullViewingKey, PreparedIncomingViewingKey, Scope},
     vote::{try_decrypt_ballot, Ballot},
 };
-use sqlx::{sqlite::SqliteRow, Acquire, Row, SqliteConnection, SqlitePool};
+use sqlx::{Acquire, SqliteConnection, SqlitePool};
 use std::str::FromStr;
 use tracing::info;
 use zcash_vote::{

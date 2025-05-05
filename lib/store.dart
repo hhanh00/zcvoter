@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:mobx/mobx.dart';
 import 'package:toastification/toastification.dart';
+import 'package:zcvoter/main.dart';
 import 'package:zcvoter/pages/home.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
+import 'package:zcvoter/src/rust/api/init.dart';
 
 part 'store.g.dart';
 
@@ -24,6 +26,21 @@ abstract class AppStoreBase with Store {
   int? height;
   @observable
   int availableVotes = 0;
+
+  Future<void> init() async {
+    final stream = setLogStream();
+    stream.listen((m) {
+      logger.i(m);
+      if (m.span == "vote") {
+        toastification.show(
+            description: Text(m.message),
+            margin: EdgeInsets.all(8),
+            borderRadius: BorderRadius.circular(8),
+            animationDuration: Durations.long1,
+            autoCloseDuration: Duration(seconds: 3));
+      }
+    });
+  }
 
   @action
   Future<void> loadElectionData(String id) async {
