@@ -21,3 +21,15 @@ Future<void> showException(BuildContext context, String message) async {
   ).show();
 }
 
+Future<void> showMessage(BuildContext context, String message,
+    {String? title}) async {
+  await AwesomeDialog(
+    context: context,
+    dialogType: DialogType.info,
+    animType: AnimType.rightSlide,
+    title: title,
+    desc: message,
+    btnOkOnPress: () {},
+    autoDismiss: true,
+  ).show();
+}

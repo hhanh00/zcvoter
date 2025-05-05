@@ -13,8 +13,9 @@ use zcash_vote::{
 
 use crate::election::{get_election, get_fvk};
 
-pub async fn ballot_sync_status(connection: &SqlitePool) -> Result<(u32, u32)> {
-    let base_url = load_prop(&connection, "url").await?.expect("Missing URL");
+pub async fn ballot_sync_status(pool: &SqlitePool) -> Result<(u32, u32)> {
+    let mut connection = pool.acquire().await?;
+    let base_url = load_prop(&mut connection, "url").await?.expect("Missing URL");
     let url = format!("{}/num_ballots", base_url);
     let n = reqwest::get(url).await?.text().await?;
     let n = u32::from_str(&n).expect("parse number of ballots");
@@ -23,7 +24,7 @@ pub async fn ballot_sync_status(connection: &SqlitePool) -> Result<(u32, u32)> {
         SELECT COUNT(*) FROM ballots
         "#,
     )
-    .fetch_one(connection)
+    .fetch_one(&mut *connection)
     .await?;
     let c = c.unwrap_or_default();
 
@@ -31,12 +32,13 @@ pub async fn ballot_sync_status(connection: &SqlitePool) -> Result<(u32, u32)> {
     Ok((c, n))
 }
 
-pub async fn ballot_sync(connection: &SqlitePool) -> Result<()> {
-    let base_url = load_prop(&connection, "url").await?.expect("Missing URL");
-    let election = get_election(&connection).await?;
-    let fvk = get_fvk(connection).await?;
+pub async fn ballot_sync(pool: &SqlitePool) -> Result<()> {
+    let mut connection = pool.acquire().await?;
+    let base_url = load_prop(&mut connection, "url").await?.expect("Missing URL");
+    let election = get_election(&mut connection).await?;
+    let fvk = get_fvk(&mut connection).await?;
 
-    let (c, n) = ballot_sync_status(&connection).await?;
+    let (c, n) = ballot_sync_status(pool).await?;
 
     if c < n {
         for i in c..n {

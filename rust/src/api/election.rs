@@ -8,7 +8,7 @@ use zcash_vote::db::load_prop;
 
 use crate::frb_generated::StreamSink;
 
-use super::{get_connection, get_directory_connection};
+use super::{get_pool, get_directory_connection};
 
 #[frb]
 pub async fn create_directory_db(directory: &str) -> Result<()> {
@@ -44,8 +44,8 @@ pub async fn list_elections() -> Result<Vec<ElectionRec>> {
 
 #[frb]
 pub async fn get_election(hash: &str) -> Result<ElectionData> {
-    let connection = get_connection(hash).await?;
-    let election_string = load_prop(&connection, "election").await?.expect("election");
+    let mut connection = get_pool(hash).await?.acquire().await?;
+    let election_string = load_prop(&mut connection, "election").await?.expect("election");
     let election: zcash_vote::election::Election = serde_json::from_str(&election_string)?;
     let data = ElectionData {
         name: election.name,
@@ -64,8 +64,9 @@ pub async fn get_election(hash: &str) -> Result<ElectionData> {
     Ok(data)
 }
 
+#[frb]
 pub async fn vote_election(hash: &str, address: &str, amount: u64) -> Result<String> {
-    let connection = get_connection(hash).await?;
+    let connection = get_pool(hash).await?;
     crate::election::vote_election(&connection, address, amount).await
 }
 
@@ -76,10 +77,10 @@ pub fn is_valid_seed(seed: &str) -> bool {
 
 #[frb]
 pub async fn is_refdata_loaded(hash: &str) -> Result<bool> {
-    let connection = get_connection(hash).await?;
-    let election = crate::election::get_election(&connection).await?;
+    let mut connection = get_pool(hash).await?.acquire().await?;
+    let election = crate::election::get_election(&mut connection).await?;
     let end_height = election.end_height;
-    let sync_height = load_prop(&connection, "height").await?;
+    let sync_height = load_prop(&mut connection, "height").await?;
     if let Some(sync_height) = sync_height {
         let sync_height = u32::from_str(&sync_height).expect("sync height");
         Ok(end_height == sync_height)
@@ -97,7 +98,7 @@ pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Resu
             progress.add(v).expect("progress sink");
         }
     });
-    let connection = get_connection(hash).await?;
+    let connection = get_pool(hash).await?;
     crate::election::synchronize(
         &connection,
         tx_progress,
@@ -106,20 +107,20 @@ pub async fn election_synchronize(progress: StreamSink<u32>, hash: &str) -> Resu
 
 #[frb]
 pub async fn is_ballot_synced(hash: &str) -> Result<bool> {
-    let connection = get_connection(hash).await?;
+    let connection = get_pool(hash).await?;
     let (c, n) = crate::sync::ballot_sync_status(&connection).await?;
     Ok(c == n)
 }
 
 #[frb]
 pub async fn ballot_sync(hash: &str) -> Result<()> {
-    let connection = get_connection(hash).await?;
+    let connection = get_pool(hash).await?;
     crate::sync::ballot_sync(&connection).await
 }
 
 #[frb]
 pub async fn votes_available(hash: &str) -> Result<u64> {
-    let connection = get_connection(hash).await?;
+    let connection = get_pool(hash).await?;
     let n = crate::election::votes_available(&connection).await?;
     Ok(n)
 }
