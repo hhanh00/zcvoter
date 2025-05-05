@@ -55,7 +55,7 @@ class HomePageState extends State<HomePage> with RouteAware {
             subtitle: Text(election.question),
             trailing: const Icon(Icons.chevron_right),
             onTap: () =>
-                GoRouter.of(context).push("/election", extra: election.hash),
+                GoRouter.of(context).push("/election", extra: election),
           );
         },
       ),

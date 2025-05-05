@@ -40,6 +40,22 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
+  late final _$refDataLoadedAtom =
+      Atom(name: 'AppStoreBase.refDataLoaded', context: context);
+
+  @override
+  bool get refDataLoaded {
+    _$refDataLoadedAtom.reportRead();
+    return super.refDataLoaded;
+  }
+
+  @override
+  set refDataLoaded(bool value) {
+    _$refDataLoadedAtom.reportWrite(value, super.refDataLoaded, () {
+      super.refDataLoaded = value;
+    });
+  }
+
   late final _$heightAtom = Atom(name: 'AppStoreBase.height', context: context);
 
   @override
@@ -55,21 +71,46 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
-  late final _$refDataSynchronizeAsyncAction =
-      AsyncAction('AppStoreBase.refDataSynchronize', context: context);
+  late final _$availableVotesAtom =
+      Atom(name: 'AppStoreBase.availableVotes', context: context);
 
   @override
-  Future<void> refDataSynchronize() {
-    return _$refDataSynchronizeAsyncAction
-        .run(() => super.refDataSynchronize());
+  int get availableVotes {
+    _$availableVotesAtom.reportRead();
+    return super.availableVotes;
   }
 
-  late final _$ballotSynchronizeAsyncAction =
-      AsyncAction('AppStoreBase.ballotSynchronize', context: context);
+  @override
+  set availableVotes(int value) {
+    _$availableVotesAtom.reportWrite(value, super.availableVotes, () {
+      super.availableVotes = value;
+    });
+  }
+
+  late final _$loadElectionDataAsyncAction =
+      AsyncAction('AppStoreBase.loadElectionData', context: context);
 
   @override
-  Future<void> ballotSynchronize() {
-    return _$ballotSynchronizeAsyncAction.run(() => super.ballotSynchronize());
+  Future<void> loadElectionData(String id) {
+    return _$loadElectionDataAsyncAction.run(() => super.loadElectionData(id));
+  }
+
+  late final _$_refDataSynchronizeAsyncAction =
+      AsyncAction('AppStoreBase._refDataSynchronize', context: context);
+
+  @override
+  Future<void> _refDataSynchronize() {
+    return _$_refDataSynchronizeAsyncAction
+        .run(() => super._refDataSynchronize());
+  }
+
+  late final _$_ballotSynchronizeAsyncAction =
+      AsyncAction('AppStoreBase._ballotSynchronize', context: context);
+
+  @override
+  Future<void> _ballotSynchronize() {
+    return _$_ballotSynchronizeAsyncAction
+        .run(() => super._ballotSynchronize());
   }
 
   late final _$synchronizeAsyncAction =
@@ -101,7 +142,9 @@ mixin _$AppStore on AppStoreBase, Store {
     return '''
 id: ${id},
 election: ${election},
-height: ${height}
+refDataLoaded: ${refDataLoaded},
+height: ${height},
+availableVotes: ${availableVotes}
     ''';
   }
 }
