@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:mobx/mobx.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
@@ -64,32 +65,42 @@ abstract class AppStoreBase with Store {
     );
   }
 
+  bool synchronizing = false;
+  int consecutiveErrors = 0;
   @action
   Future<void> synchronize() async {
-    await refDataSynchronize();
-    await ballotSynchronize();
+    if (synchronizing) return;
+    try {
+      synchronizing = true;
+      await refDataSynchronize();
+      await ballotSynchronize();
+      consecutiveErrors = 0;
+    } on AnyhowException catch (e) {
+      consecutiveErrors++;
+      if (consecutiveErrors < 3)
+        toastification.show(
+          title: Text("Synchronization Error"),
+          description: Text(e.message),
+        );
+    }
+    finally {
+      synchronizing = false;
+    }
   }
 
-  int nretries = 0;
   Timer? pollTimer;
 
   @action
-  Future<void> pollForConfirmation() async {
-    nretries = 10;
+  Future<void> startAutoSync() async {
+    await synchronize();
     pollTimer = Timer.periodic(const Duration(seconds: 15), (timer) async {
-      if (await isBallotSynced(hash: id!) && nretries > 0) {
-        nretries--;
-        return;
-      }
-      pollTimer?.cancel();
-      pollTimer = null;
-      if (nretries == 0)
-        toastification.show(
-          title: Text("Vote/Delegation Submission"),
-          description: Text("Error: No confirmation received"),
-        );
-      else
-        await ballotSynchronize();
+      await synchronize();
     });
+  }
+
+  @action
+  Future<void> cancelAutoSync() async {
+    pollTimer?.cancel();
+    pollTimer = null;
   }
 }

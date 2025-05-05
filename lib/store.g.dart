@@ -80,13 +80,20 @@ mixin _$AppStore on AppStoreBase, Store {
     return _$synchronizeAsyncAction.run(() => super.synchronize());
   }
 
-  late final _$pollForConfirmationAsyncAction =
-      AsyncAction('AppStoreBase.pollForConfirmation', context: context);
+  late final _$startAutoSyncAsyncAction =
+      AsyncAction('AppStoreBase.startAutoSync', context: context);
 
   @override
-  Future<void> pollForConfirmation() {
-    return _$pollForConfirmationAsyncAction
-        .run(() => super.pollForConfirmation());
+  Future<void> startAutoSync() {
+    return _$startAutoSyncAsyncAction.run(() => super.startAutoSync());
+  }
+
+  late final _$cancelAutoSyncAsyncAction =
+      AsyncAction('AppStoreBase.cancelAutoSync', context: context);
+
+  @override
+  Future<void> cancelAutoSync() {
+    return _$cancelAutoSyncAsyncAction.run(() => super.cancelAutoSync());
   }
 
   @override
