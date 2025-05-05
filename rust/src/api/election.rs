@@ -74,9 +74,14 @@ pub async fn is_refdata_loaded(hash: &str) -> Result<bool> {
     let connection = get_connection(hash).await?;
     let election = crate::election::get_election(&connection).await?;
     let end_height = election.end_height;
-    let sync_height = load_prop(&connection, "height").await?.unwrap_or_default();
-    let sync_height = u32::from_str(&sync_height).expect("sync height");
-    Ok(end_height == sync_height)
+    let sync_height = load_prop(&connection, "height").await?;
+    if let Some(sync_height) = sync_height {
+        let sync_height = u32::from_str(&sync_height).expect("sync height");
+        Ok(end_height == sync_height)
+    }
+    else {
+        Ok(false)
+    }
 }
 
 #[frb]

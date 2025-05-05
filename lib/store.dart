@@ -18,7 +18,11 @@ abstract class AppStoreBase with Store {
   @observable
   ElectionData? election;
   @observable
+  bool refDataLoaded = false;
+  @observable
   int? height;
+  @observable
+  int availableVotes = 0;
 
   @action
   Future<void> loadElectionData(String id) async {
@@ -28,10 +32,12 @@ abstract class AppStoreBase with Store {
   }
 
   @action
-  Future<void> refDataSynchronize() async {
-    if (await isRefdataLoaded(hash: id!)) return;
+  Future<void> _refDataSynchronize() async {
+    refDataLoaded = await isRefdataLoaded(hash: id!);
+    if (refDataLoaded) return;
 
     final syncProgress = electionSynchronize(hash: id!);
+    final complete = Completer<void>();
     toastification.show(
       title: Text("Synchronization"),
       description: Text("Downloading blockchain data..."),
@@ -45,18 +51,22 @@ abstract class AppStoreBase with Store {
       );
       height = null;
       Future.delayed(const Duration(seconds: 10), synchronize);
-    }, onDone: () {
+      complete.completeError(e);
+    }, onDone: () async {
       toastification.dismissAll();
       toastification.show(
         title: Text("Synchronization"),
         description: Text("Download complete"),
       );
       height = null;
+      refDataLoaded = await isRefdataLoaded(hash: id!);
+      complete.complete();
     });
+    return complete.future;
   }
 
   @action
-  Future<void> ballotSynchronize() async {
+  Future<void> _ballotSynchronize() async {
     if (await isBallotSynced(hash: id!)) return;
 
     await ballotSync(hash: id!);
@@ -68,22 +78,18 @@ abstract class AppStoreBase with Store {
   }
 
   bool synchronizing = false;
-  int consecutiveErrors = 0;
   @action
   Future<void> synchronize() async {
     if (synchronizing) return;
     try {
       synchronizing = true;
-      await refDataSynchronize();
-      await ballotSynchronize();
-      consecutiveErrors = 0;
+      await _refDataSynchronize();
+      await _ballotSynchronize();
     } on AnyhowException catch (e) {
-      consecutiveErrors++;
-      if (consecutiveErrors < 3)
-        toastification.show(
-          title: Text("Synchronization Error"),
-          description: Text(e.message),
-        );
+      toastification.show(
+        title: Text("Synchronization Error. Retry in 1 minute"),
+        description: Text(e.message),
+      );
     }
     finally {
       synchronizing = false;
@@ -95,7 +101,7 @@ abstract class AppStoreBase with Store {
   @action
   Future<void> startAutoSync() async {
     await synchronize();
-    pollTimer = Timer.periodic(const Duration(seconds: 15), (timer) async {
+    pollTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
       await synchronize();
     });
   }

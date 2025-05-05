@@ -20,8 +20,7 @@ class ElectionPageState extends State<ElectionPage> {
     Future(() async {
       await appStore.loadElectionData(widget.election.hash);
       await appStore.startAutoSync();
-    }
-    );
+    });
   }
 
   @override
@@ -50,6 +49,7 @@ class ElectionPageState extends State<ElectionPage> {
           ],
         ),
         body: Observer(builder: (context) {
+          final refDataLoaded = appStore.refDataLoaded;
           final election = appStore.election;
           if (election == null) {
             return const Center(child: Text("No election data available"));
@@ -61,8 +61,8 @@ class ElectionPageState extends State<ElectionPage> {
                   .clamp(0.0, 1.0)
               : null;
           return SingleChildScrollView(
-              child: Column(
-            children: [
+              child: Column(children: [
+            if (refDataLoaded) ...[
               ListTile(
                 title: Text("Election ID"),
                 subtitle: Text(widget.election.hash),
@@ -85,19 +85,19 @@ class ElectionPageState extends State<ElectionPage> {
                           leading: CircleAvatar(child: Text("${a.key + 1}")),
                           title: Text(a.value.value),
                         )),
-                    if (height != null) ...[
-                      Gap(16),
-                      ListTile(
-                        title: Text(election.name),
-                        subtitle: LinearProgressIndicator(value: progress!),
-                      ),
-                      Gap(8),
-                      Text(
-                          "Please hold on while the election data is retrieved and processed."),
-                    ],
                   ]))
             ],
-          ));
+            if (height != null) ...[
+              Gap(16),
+              ListTile(
+                title: Text("Download Progress"),
+                subtitle: LinearProgressIndicator(value: progress!),
+              ),
+              Gap(8),
+              Text(
+                  "Please hold on while the election data is retrieved and processed."),
+            ],
+          ]));
         }));
   }
 
