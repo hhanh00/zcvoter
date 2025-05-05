@@ -20,7 +20,9 @@ abstract class AppStoreBase with Store {
   @observable
   int? height;
 
-  loadElectionData(String id) async {
+  @action
+  Future<void> loadElectionData(String id) async {
+    if (election != null) return;
     this.id = id;
     election = await getElection(hash: id);
   }
