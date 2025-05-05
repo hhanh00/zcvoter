@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:mobx/mobx.dart';
 import 'package:toastification/toastification.dart';
+import 'package:zcvoter/pages/home.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 
 part 'store.g.dart';
@@ -90,8 +91,7 @@ abstract class AppStoreBase with Store {
         title: Text("Synchronization Error. Retry in 1 minute"),
         description: Text(e.message),
       );
-    }
-    finally {
+    } finally {
       synchronizing = false;
     }
   }
@@ -110,5 +110,12 @@ abstract class AppStoreBase with Store {
   Future<void> cancelAutoSync() async {
     pollTimer?.cancel();
     pollTimer = null;
+  }
+
+  @action
+  Future<void> updateAvailableVotes() async {
+    final v = await votesAvailable(hash: appStore.id!);
+    final votes = (v ~/ BigInt.from(ZatsPerVote)).toInt();
+    availableVotes = votes;
   }
 }

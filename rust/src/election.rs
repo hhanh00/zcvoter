@@ -2,8 +2,8 @@ use anyhow::Result;
 use bip39::Mnemonic;
 use orchard::keys::{FullViewingKey, SpendingKey};
 use sqlx::SqlitePool;
-use tokio::sync::Mutex;
 use std::sync::mpsc::Sender;
+use tokio::sync::Mutex;
 use tracing::info;
 use zcash_primitives::zip32::AccountId;
 use zcash_protocol::consensus::NetworkConstants;
@@ -98,6 +98,20 @@ pub async fn trim_data(connection: &SqlitePool) -> Result<()> {
     sqlx::query("DELETE FROM notes").execute(connection).await?;
 
     Ok(())
+}
+
+pub async fn votes_available(connection: &SqlitePool) -> Result<u64> {
+    let (votes,): (Option<u64>,) = sqlx::query_as(
+        "SELECT SUM(value) FROM notes WHERE spent IS NULL",
+    )
+    .fetch_one(connection)
+    .await?;
+    Ok(votes.unwrap_or_default())
+}
+
+pub async fn vote_election(_connection: &SqlitePool, address: &str, amount: u64) -> Result<String> {
+    info!("Vote election: {} {}", address, amount);
+    Ok("".to_string())
 }
 
 lazy_static::lazy_static! {

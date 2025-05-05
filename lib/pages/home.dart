@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:zcvoter/router.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 
+const ZatsPerVote = 100000;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

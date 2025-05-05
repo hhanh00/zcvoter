@@ -64,6 +64,11 @@ pub async fn get_election(hash: &str) -> Result<ElectionData> {
     Ok(data)
 }
 
+pub async fn vote_election(hash: &str, address: &str, amount: u64) -> Result<String> {
+    let connection = get_connection(hash).await?;
+    crate::election::vote_election(&connection, address, amount).await
+}
+
 #[frb(sync)]
 pub fn is_valid_seed(seed: &str) -> bool {
     Mnemonic::from_str(seed).is_ok()
@@ -110,6 +115,13 @@ pub async fn is_ballot_synced(hash: &str) -> Result<bool> {
 pub async fn ballot_sync(hash: &str) -> Result<()> {
     let connection = get_connection(hash).await?;
     crate::sync::ballot_sync(&connection).await
+}
+
+#[frb]
+pub async fn votes_available(hash: &str) -> Result<u64> {
+    let connection = get_connection(hash).await?;
+    let n = crate::election::votes_available(&connection).await?;
+    Ok(n)
 }
 
 #[frb(dart_metadata = ("freezed"))]
