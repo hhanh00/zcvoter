@@ -83,7 +83,7 @@ class AddPageState extends State<AddPage> {
   }
 
   onScan() async {
-    final code = await showScanner(context, validator: isSeed);
+    final code = await showScanner(context, validator: FormBuilderValidators.url());
     if (code != null) {
       urlController.text = code;
     }
