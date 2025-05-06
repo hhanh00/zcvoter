@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:zcvoter/router.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 
 const ZatsPerVote = 100000;
+
+final addElectionID = GlobalKey();
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,7 +48,8 @@ class HomePageState extends State<HomePage> with RouteAware {
       appBar: AppBar(
         title: const Text('Elections'),
         actions: [
-          IconButton(icon: const Icon(Icons.add), onPressed: onAddElection)
+          Showcase(key: addElectionID, description: "Tap to Start a new Election", child:
+          IconButton(icon: const Icon(Icons.add), onPressed: onAddElection))
         ],
       ),
       body: ListView.builder(
@@ -70,6 +74,13 @@ class HomePageState extends State<HomePage> with RouteAware {
 
   _refresh() async {
     final elections = await listElections();
+    if (elections.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([
+          addElectionID,
+        ]);
+      });
+    }
     setState(() => this.elections = elections);
   }
 }

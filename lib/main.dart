@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 import 'package:zcvoter/store.dart';
@@ -18,10 +19,12 @@ Future<void> main() async {
   final dbDir = await getApplicationDocumentsDirectory();
   await createDirectoryDb(directory: dbDir.path);
 
-  runApp(ToastificationWrapper(child: MaterialApp.router(
-      routerConfig: router,
-      themeMode: ThemeMode.system,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      debugShowCheckedModeBanner: false)));
+  runApp(ToastificationWrapper(child:
+    ShowCaseWidget(builder: (context) =>
+      MaterialApp.router(
+        routerConfig: router,
+        themeMode: ThemeMode.system,
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        debugShowCheckedModeBanner: false))));
 }
