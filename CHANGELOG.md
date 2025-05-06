@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.4.0...zcvoter-v1.5.0) (2025-05-06)
+
+
+### Features
+
+* confirmations and ui improvements ([#23](https://github.com/hhanh00/zcvoter/issues/23)) ([b85baf5](https://github.com/hhanh00/zcvoter/commit/b85baf59202c4ba053d3207443193ce9ce3eda1c))
+* delegation ([#22](https://github.com/hhanh00/zcvoter/issues/22)) ([42cfd8f](https://github.com/hhanh00/zcvoter/commit/42cfd8f3ca7e8dfc2c45806edbe4f2ebbcd2324a))
+* delete elections ([#25](https://github.com/hhanh00/zcvoter/issues/25)) ([cbcfe2d](https://github.com/hhanh00/zcvoter/commit/cbcfe2df64a2644cb79b0f4261290648e5b0c79d))
+* show vote history ([#20](https://github.com/hhanh00/zcvoter/issues/20)) ([6307473](https://github.com/hhanh00/zcvoter/commit/630747327243e723406729db66654b637c79c682))
+* showcase tutorial ([#24](https://github.com/hhanh00/zcvoter/issues/24)) ([0fed053](https://github.com/hhanh00/zcvoter/commit/0fed05359c336dc40f45cf47e2fc3e3003e75394))
+* splash screen ([#26](https://github.com/hhanh00/zcvoter/issues/26)) ([ebdbaa2](https://github.com/hhanh00/zcvoter/commit/ebdbaa21f3ba7e12277551bbb2294dd2529ab064))
+
 ## [1.4.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.3.0...zcvoter-v1.4.0) (2025-05-05)
 
 
