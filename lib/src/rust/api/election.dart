@@ -28,9 +28,10 @@ Future<ElectionData> getElection({required String hash}) =>
 Future<String> voteElection(
         {required String hash,
         required String address,
-        required BigInt amount}) =>
+        required BigInt amount,
+        int? choice}) =>
     RustLib.instance.api.crateApiElectionVoteElection(
-        hash: hash, address: address, amount: amount);
+        hash: hash, address: address, amount: amount, choice: choice);
 
 bool isValidSeed({required String seed}) =>
     RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
@@ -49,6 +50,9 @@ Future<void> ballotSync({required String hash}) =>
 
 Future<BigInt> votesAvailable({required String hash}) =>
     RustLib.instance.api.crateApiElectionVotesAvailable(hash: hash);
+
+Future<List<VoteRec>> listVotes({required String hash}) =>
+    RustLib.instance.api.crateApiElectionListVotes(hash: hash);
 
 @freezed
 class Answer with _$Answer {
@@ -77,4 +81,15 @@ class ElectionRec with _$ElectionRec {
     required String name,
     required String question,
   }) = _ElectionRec;
+}
+
+@freezed
+class VoteRec with _$VoteRec {
+  const factory VoteRec({
+    required int id,
+    required String hash,
+    required String address,
+    required BigInt amount,
+    int? choice,
+  }) = _VoteRec;
 }

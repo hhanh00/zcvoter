@@ -65,9 +65,9 @@ pub async fn get_election(hash: &str) -> Result<ElectionData> {
 }
 
 #[frb]
-pub async fn vote_election(hash: &str, address: &str, amount: u64) -> Result<String> {
+pub async fn vote_election(hash: &str, address: &str, amount: u64, choice: Option<u32>) -> Result<String> {
     let connection = get_pool(hash).await?;
-    crate::election::vote_election(&connection, address, amount).await
+    crate::election::vote_election(&connection, address, amount, choice).await
 }
 
 #[frb(sync)]
@@ -125,6 +125,13 @@ pub async fn votes_available(hash: &str) -> Result<u64> {
     Ok(n)
 }
 
+#[frb]
+pub async fn list_votes(hash: &str) -> Result<Vec<VoteRec>> {
+    let connection = get_pool(hash).await?;
+    let votes = crate::election::list_votes(&connection).await?;
+    Ok(votes)
+}
+
 #[frb(dart_metadata = ("freezed"))]
 #[derive(Debug, Clone)]
 pub struct ElectionRec {
@@ -147,4 +154,13 @@ pub struct ElectionData {
     pub end_height: u32,
     pub question: String,
     pub answers: Vec<Answer>,
+}
+
+#[frb(dart_metadata = ("freezed"))]
+pub struct VoteRec {
+    pub id: u32,
+    pub hash: String,
+    pub address: String,
+    pub amount: u64,
+    pub choice: Option<u32>,
 }

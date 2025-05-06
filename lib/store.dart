@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:mobx/mobx.dart';
 import 'package:toastification/toastification.dart';
-import 'package:zcvoter/main.dart';
 import 'package:zcvoter/pages/home.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 import 'package:zcvoter/src/rust/api/init.dart';
@@ -26,11 +25,12 @@ abstract class AppStoreBase with Store {
   int? height;
   @observable
   int availableVotes = 0;
+  @observable
+  ObservableList<VoteRec> votes = ObservableList.of([]);
 
   Future<void> init() async {
     final stream = setLogStream();
     stream.listen((m) {
-      logger.i(m);
       if (m.span == "vote") {
         toastification.show(
             description: Text(m.message),
@@ -88,6 +88,8 @@ abstract class AppStoreBase with Store {
     if (await isBallotSynced(hash: id!)) return;
 
     await ballotSync(hash: id!);
+    await updateAvailableVotes();
+    await updateVoteHistory();
     toastification.show(
       title: Text("Ballot Sync"),
       description: Text("Ballot sync complete"),
@@ -134,5 +136,11 @@ abstract class AppStoreBase with Store {
     final v = await votesAvailable(hash: appStore.id!);
     final votes = (v ~/ BigInt.from(ZatsPerVote)).toInt();
     availableVotes = votes;
+  }
+
+  @action
+  Future<void> updateVoteHistory() async {
+    final vs = await listVotes(hash: appStore.id!);
+    votes = ObservableList.of(vs);
   }
 }

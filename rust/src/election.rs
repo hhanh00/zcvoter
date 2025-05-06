@@ -3,7 +3,7 @@ use bip39::Mnemonic;
 use orchard::{keys::{FullViewingKey, SpendingKey}, vote::{Ballot, Circuit, ProvingKey, VerifyingKey}};
 use rand_core::OsRng;
 use reqwest::header::CONTENT_TYPE;
-use sqlx::{SqliteConnection, SqlitePool};
+use sqlx::{sqlite::SqliteRow, SqliteConnection, SqlitePool, Row};
 use std::sync::mpsc::Sender;
 use tokio::sync::Mutex;
 use tracing::{info, span, Level};
@@ -11,7 +11,7 @@ use zcash_primitives::zip32::AccountId;
 use zcash_protocol::consensus::NetworkConstants;
 use zcash_vote::{address::VoteAddress, db::{list_notes, load_prop}, download::download_reference_data, election::Election, trees::{list_cmxs, list_nf_ranges}};
 
-use crate::NETWORK;
+use crate::{api::election::VoteRec, NETWORK};
 
 pub async fn connect_election(
     connection: &SqlitePool,
@@ -55,9 +55,10 @@ pub async fn connect_election(
     sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS votes(
         id_vote INTEGER PRIMARY KEY,
-        hash TEXT NOT NULL,
+        hash BLOB NOT NULL,
         address TEXT NOT NULL,
         amount INTEGER NOT NULL,
+        choice INTEGER,
         UNIQUE (hash))"#)
     .execute(&mut *connection).await?;
 
@@ -128,7 +129,7 @@ pub async fn votes_available(connection: &SqlitePool) -> Result<u64> {
     Ok(votes.unwrap_or_default())
 }
 
-pub async fn vote_election(pool: &SqlitePool, address: &str, amount: u64) -> Result<String> {
+pub async fn vote_election(pool: &SqlitePool, address: &str, amount: u64, choice: Option<u32>) -> Result<String> {
     let span = span!(Level::INFO, "vote");
     info!("Vote election: {} {}", address, amount);
     let vaddress = VoteAddress::decode(address)?;
@@ -158,7 +159,7 @@ pub async fn vote_election(pool: &SqlitePool, address: &str, amount: u64) -> Res
         &BALLOT_PK,
         &BALLOT_VK,
     )?;
-    let ballot_hash = submit_ballot(pool, address, amount, &ballot).await?;
+    let ballot_hash = submit_ballot(pool, address, amount, choice, &ballot).await?;
 
     Ok(ballot_hash)
 }
@@ -167,15 +168,17 @@ pub async fn submit_ballot(
     pool: &SqlitePool,
     address: &str,
     amount: u64,
+    choice: Option<u32>,
     ballot: &Ballot,
 ) -> Result<String> {
     sqlx::query(
         r#"
-        INSERT INTO votes (hash, address, amount)
-        VALUES (?, ?, ?) ON CONFLICT(hash) DO NOTHING"#)
+        INSERT INTO votes (hash, address, amount, choice)
+        VALUES (?, ?, ?, ?) ON CONFLICT(hash) DO NOTHING"#)
     .bind(ballot.data.sighash()?)
     .bind(address)
     .bind(amount as i64)
+    .bind(choice)
     .execute(pool)
     .await?;
 
@@ -193,6 +196,34 @@ pub async fn submit_ballot(
     let hash = rep.text().await?;
 
     Ok(hash)
+}
+
+pub async fn list_votes(pool: &SqlitePool) -> Result<Vec<VoteRec>> {
+    let mut connection = pool.acquire().await?;
+    let votes = sqlx::query(
+        r#"
+        SELECT id_vote, hash, address, amount, choice
+        FROM votes
+        ORDER BY id_vote DESC"#,
+    )
+    .map(|row: SqliteRow| {
+        let id: u32 = row.get(0);
+        let hash: Vec<u8> = row.get(1);
+        let address: String = row.get(2);
+        let amount: i64 = row.get(3);
+        let choice: Option<u32> = row.get(4);
+        VoteRec {
+            id,
+            hash: hex::encode(&hash),
+            address,
+            amount: amount as u64,
+            choice,
+        }
+    })
+    .fetch_all(&mut *connection)
+    .await?;
+
+    Ok(votes)
 }
 
 lazy_static::lazy_static! {

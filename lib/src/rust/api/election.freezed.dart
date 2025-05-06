@@ -563,3 +563,203 @@ abstract class _ElectionRec implements ElectionRec {
   _$$ElectionRecImplCopyWith<_$ElectionRecImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+/// @nodoc
+mixin _$VoteRec {
+  int get id => throw _privateConstructorUsedError;
+  String get hash => throw _privateConstructorUsedError;
+  String get address => throw _privateConstructorUsedError;
+  BigInt get amount => throw _privateConstructorUsedError;
+  int? get choice => throw _privateConstructorUsedError;
+
+  /// Create a copy of VoteRec
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $VoteRecCopyWith<VoteRec> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $VoteRecCopyWith<$Res> {
+  factory $VoteRecCopyWith(VoteRec value, $Res Function(VoteRec) then) =
+      _$VoteRecCopyWithImpl<$Res, VoteRec>;
+  @useResult
+  $Res call({int id, String hash, String address, BigInt amount, int? choice});
+}
+
+/// @nodoc
+class _$VoteRecCopyWithImpl<$Res, $Val extends VoteRec>
+    implements $VoteRecCopyWith<$Res> {
+  _$VoteRecCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of VoteRec
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? hash = null,
+    Object? address = null,
+    Object? amount = null,
+    Object? choice = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      hash: null == hash
+          ? _value.hash
+          : hash // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as BigInt,
+      choice: freezed == choice
+          ? _value.choice
+          : choice // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$VoteRecImplCopyWith<$Res> implements $VoteRecCopyWith<$Res> {
+  factory _$$VoteRecImplCopyWith(
+          _$VoteRecImpl value, $Res Function(_$VoteRecImpl) then) =
+      __$$VoteRecImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int id, String hash, String address, BigInt amount, int? choice});
+}
+
+/// @nodoc
+class __$$VoteRecImplCopyWithImpl<$Res>
+    extends _$VoteRecCopyWithImpl<$Res, _$VoteRecImpl>
+    implements _$$VoteRecImplCopyWith<$Res> {
+  __$$VoteRecImplCopyWithImpl(
+      _$VoteRecImpl _value, $Res Function(_$VoteRecImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VoteRec
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? hash = null,
+    Object? address = null,
+    Object? amount = null,
+    Object? choice = freezed,
+  }) {
+    return _then(_$VoteRecImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      hash: null == hash
+          ? _value.hash
+          : hash // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
+              as BigInt,
+      choice: freezed == choice
+          ? _value.choice
+          : choice // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$VoteRecImpl implements _VoteRec {
+  const _$VoteRecImpl(
+      {required this.id,
+      required this.hash,
+      required this.address,
+      required this.amount,
+      this.choice});
+
+  @override
+  final int id;
+  @override
+  final String hash;
+  @override
+  final String address;
+  @override
+  final BigInt amount;
+  @override
+  final int? choice;
+
+  @override
+  String toString() {
+    return 'VoteRec(id: $id, hash: $hash, address: $address, amount: $amount, choice: $choice)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VoteRecImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.hash, hash) || other.hash == hash) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.choice, choice) || other.choice == choice));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, hash, address, amount, choice);
+
+  /// Create a copy of VoteRec
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$VoteRecImplCopyWith<_$VoteRecImpl> get copyWith =>
+      __$$VoteRecImplCopyWithImpl<_$VoteRecImpl>(this, _$identity);
+}
+
+abstract class _VoteRec implements VoteRec {
+  const factory _VoteRec(
+      {required final int id,
+      required final String hash,
+      required final String address,
+      required final BigInt amount,
+      final int? choice}) = _$VoteRecImpl;
+
+  @override
+  int get id;
+  @override
+  String get hash;
+  @override
+  String get address;
+  @override
+  BigInt get amount;
+  @override
+  int? get choice;
+
+  /// Create a copy of VoteRec
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$VoteRecImplCopyWith<_$VoteRecImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

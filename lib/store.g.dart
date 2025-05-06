@@ -87,6 +87,21 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
+  late final _$votesAtom = Atom(name: 'AppStoreBase.votes', context: context);
+
+  @override
+  ObservableList<VoteRec> get votes {
+    _$votesAtom.reportRead();
+    return super.votes;
+  }
+
+  @override
+  set votes(ObservableList<VoteRec> value) {
+    _$votesAtom.reportWrite(value, super.votes, () {
+      super.votes = value;
+    });
+  }
+
   late final _$loadElectionDataAsyncAction =
       AsyncAction('AppStoreBase.loadElectionData', context: context);
 
@@ -146,6 +161,14 @@ mixin _$AppStore on AppStoreBase, Store {
         .run(() => super.updateAvailableVotes());
   }
 
+  late final _$updateVoteHistoryAsyncAction =
+      AsyncAction('AppStoreBase.updateVoteHistory', context: context);
+
+  @override
+  Future<void> updateVoteHistory() {
+    return _$updateVoteHistoryAsyncAction.run(() => super.updateVoteHistory());
+  }
+
   @override
   String toString() {
     return '''
@@ -153,7 +176,8 @@ id: ${id},
 election: ${election},
 refDataLoaded: ${refDataLoaded},
 height: ${height},
-availableVotes: ${availableVotes}
+availableVotes: ${availableVotes},
+votes: ${votes}
     ''';
   }
 }
