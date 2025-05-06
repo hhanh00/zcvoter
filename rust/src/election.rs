@@ -39,9 +39,9 @@ pub async fn connect_election(
     .await?;
 
     let connection = crate::api::get_election_connection(&election.id()).await?;
-    zcash_vote::db::create_schema(&connection).await?;
     let mut connection = connection.acquire().await?;
 
+    zcash_vote::db::create_schema(&mut connection).await?;
     zcash_vote::db::store_prop(&mut connection, "lwd", lwd).await?;
     zcash_vote::db::store_prop(&mut connection, "url", url).await?;
     zcash_vote::db::store_prop(
@@ -82,7 +82,7 @@ pub async fn synchronize(pool: &SqlitePool, tx_progress: Sender<u32>) -> Result<
         let fvk: FullViewingKey = get_fvk(&mut connection).await?;
         let lwd_url = load_prop(&mut connection, "lwd").await?.expect("lwd");
         trim_data(&mut connection).await?;
-        download_reference_data(&pool, 0, &election, Some(fvk), &lwd_url, move |h| {
+        download_reference_data(&mut connection, 0, &election, Some(fvk), &lwd_url, move |h| {
             info!("Progress: {}", h);
             tx_progress.send(h).expect("send progress");
         })
@@ -152,9 +152,9 @@ pub async fn vote_election(pool: &SqlitePool, address: &str, amount: u64, choice
     let election = get_election(&mut connection).await?;
     let sk = get_sk(&mut connection).await?;
     let fvk = get_fvk(&mut connection).await?;
-    let notes = list_notes(pool, 0, &fvk).await?;
-    let cmxs = list_cmxs(pool).await?;
-    let nfs = list_nf_ranges(pool).await?;
+    let notes = list_notes(&mut connection, 0, &fvk).await?;
+    let cmxs = list_cmxs(&mut connection).await?;
+    let nfs = list_nf_ranges(&mut connection).await?;
     let ballot = orchard::vote::vote(
         election.domain(),
         election.signature_required,
