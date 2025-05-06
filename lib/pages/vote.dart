@@ -11,7 +11,8 @@ import 'package:zcvoter/store.dart';
 import 'package:zcvoter/utils.dart';
 
 class VotePage extends StatefulWidget {
-  const VotePage({super.key});
+  final int? initialChoice;
+  const VotePage({this.initialChoice, super.key});
 
   @override
   State<VotePage> createState() => VotePageState();
@@ -79,6 +80,7 @@ class VotePageState extends State<VotePage> {
                         orientation: OptionsOrientation.vertical,
                         options: options,
                         validator: FormBuilderValidators.required(),
+                        initialValue: widget.initialChoice,
                       ),
                       Gap(16),
                       OverflowBar(children: [
@@ -117,14 +119,21 @@ class VotePageState extends State<VotePage> {
     final voteString = form.value["vote"] as String;
     final vote = int.parse(voteString);
     final choice = form.value["choice"] as int;
+    final answer = appStore.election!.answers[choice].value;
     logger.i("Vote: $vote for $choice");
+    final confirmed = await confirmDialog(context, title: "Vote",
+        message: "Are you sure you want to give $vote votes to '$answer'?");
+    if (!confirmed) return;
 
+    if (!mounted) return;
+    final wait = showBlockingDialog(context, "Submitting vote...");
     final voteHash = await voteElection(
         hash: appStore.id!,
         address: appStore.election!.answers[choice].address,
         amount: BigInt.from(vote * ZatsPerVote),
         choice: choice);
     logger.i("Vote hash: $voteHash");
+    wait.dismiss();
 
     if (!mounted) return;
     await showMessage(context, title: "Vote submitted", "Vote hash: $voteHash");

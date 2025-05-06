@@ -26,7 +26,7 @@ final router = GoRouter(
     GoRoute(
         path: '/receive', builder: (context, state) => ReceivePage()),
     GoRoute(
-        path: '/vote', builder: (context, state) => VotePage()),
+        path: '/vote', builder: (context, state) => VotePage(initialChoice: state.extra as int?)),
     GoRoute(
         path: '/delegate', builder: (context, state) => DelegatePage()),
     GoRoute(
