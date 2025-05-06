@@ -23,6 +23,12 @@ pub async fn connect_election(url: &str, lwd: &str, seed: &str) -> Result<String
 }
 
 #[frb]
+pub async fn remove_election(hash: &str) -> Result<()> {
+    let directory = get_directory_connection().await?;
+    crate::election::remove_election(&directory, hash).await
+}
+
+#[frb]
 pub async fn list_elections() -> Result<Vec<ElectionRec>> {
     let directory = get_directory_connection().await?;
     let elections = sqlx::query(

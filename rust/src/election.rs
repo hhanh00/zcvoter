@@ -11,7 +11,7 @@ use zcash_primitives::zip32::AccountId;
 use zcash_protocol::consensus::NetworkConstants;
 use zcash_vote::{address::VoteAddress, db::{list_notes, load_prop}, download::download_reference_data, election::Election, trees::{list_cmxs, list_nf_ranges}};
 
-use crate::{api::election::VoteRec, NETWORK};
+use crate::{api::{election::VoteRec, get_election_path}, NETWORK};
 
 pub async fn connect_election(
     connection: &SqlitePool,
@@ -63,6 +63,16 @@ pub async fn connect_election(
     .execute(&mut *connection).await?;
 
     Ok(election.id())
+}
+
+pub async fn remove_election(directory: &SqlitePool, hash: &str) -> Result<()> {
+    let db_file_path = get_election_path(hash);
+    std::fs::remove_file(&db_file_path).expect("remove file");
+    sqlx::query("DELETE FROM elections WHERE hash = ?")
+        .bind(hash)
+        .execute(directory)
+        .await?;
+    Ok(())
 }
 
 pub async fn synchronize(pool: &SqlitePool, tx_progress: Sender<u32>) -> Result<()> {

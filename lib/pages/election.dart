@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 import 'package:zcvoter/store.dart';
+import 'package:zcvoter/utils.dart';
 
 class ElectionPage extends StatefulWidget {
   final ElectionRec election;
@@ -40,6 +41,10 @@ class ElectionPageState extends State<ElectionPage> {
         appBar: AppBar(
           title: Text(widget.election.name),
           actions: [
+            IconButton(
+                tooltip: "Delete",
+                icon: const Icon(Icons.delete_forever),
+                onPressed: onDelete),
             IconButton(
                 tooltip: "Receive",
                 icon: const Icon(Icons.inbox),
@@ -106,6 +111,16 @@ class ElectionPageState extends State<ElectionPage> {
             ],
           ]));
         }));
+  }
+
+  onDelete() async {
+    final confirmed = await confirmDialog(context,
+        title: "Delete Election",
+        message: "Do you want to delete this election? This action cannot be undone.");
+    if (!confirmed) return;
+    await appStore.deleteElection(widget.election.hash);
+    if (!mounted) return;
+    GoRouter.of(context).pop();
   }
 
   onReceive() {

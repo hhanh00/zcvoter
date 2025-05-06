@@ -169,6 +169,14 @@ mixin _$AppStore on AppStoreBase, Store {
     return _$updateVoteHistoryAsyncAction.run(() => super.updateVoteHistory());
   }
 
+  late final _$deleteElectionAsyncAction =
+      AsyncAction('AppStoreBase.deleteElection', context: context);
+
+  @override
+  Future<void> deleteElection(String hash) {
+    return _$deleteElectionAsyncAction.run(() => super.deleteElection(hash));
+  }
+
   @override
   String toString() {
     return '''

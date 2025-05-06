@@ -7,15 +7,20 @@ pub mod init;
 pub mod election;
 
 async fn get_pool(basename: &str) -> Result<SqlitePool> {
+    let db_file_path = get_election_path(basename);
+    let options = sqlx::sqlite::SqliteConnectOptions::new()
+        .filename(db_file_path)
+        .create_if_missing(true);
+    let pool = SqlitePool::connect_with(options).await?;
+    Ok(pool)
+}
+
+pub fn get_election_path(hash: &str) -> String {
     let db_path = {
         let db_path = DB_PATH.lock().unwrap();
         db_path.clone()
     };
-    let options = sqlx::sqlite::SqliteConnectOptions::new()
-        .filename(format!("{}/{}.db", db_path, basename))
-        .create_if_missing(true);
-    let pool = SqlitePool::connect_with(options).await?;
-    Ok(pool)
+    format!("{}/{}.db", db_path, hash)
 }
 
 pub(crate) async fn get_directory_connection() -> Result<SqlitePool> {
