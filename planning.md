@@ -1,14 +1,15 @@
 - [x] prevent double sync
-- [ ] show modal message during sync
+- [x] show modal message during sync
 - [x] sync internal address
     - [x] update notes table
     - [x] try decrypt internal key
 - [x] sync cometbft
-- [ ] load vote history
-- [ ] filter delegations
-- [ ] periodic vote sync
-- [ ] vote page
-- [ ] build vote
-- [ ] submit
-- [ ] delegate form
-
+- [x] load vote history
+- [x] filter delegations
+- [x] periodic vote sync
+- [x] vote page
+- [x] build vote
+- [x] submit
+- [x] delegate form
+- [ ] improve exception handling
+- [ ] fix issue with TLS on Android
