@@ -25,6 +25,9 @@ Future<List<ElectionRec>> listElections() =>
 Future<ElectionData> getElection({required String hash}) =>
     RustLib.instance.api.crateApiElectionGetElection(hash: hash);
 
+Future<String> getVotingAddress({required String hash}) =>
+    RustLib.instance.api.crateApiElectionGetVotingAddress(hash: hash);
+
 Future<String> voteElection(
         {required String hash,
         required String address,
@@ -35,6 +38,9 @@ Future<String> voteElection(
 
 bool isValidSeed({required String seed}) =>
     RustLib.instance.api.crateApiElectionIsValidSeed(seed: seed);
+
+bool isValidAddress({required String address}) =>
+    RustLib.instance.api.crateApiElectionIsValidAddress(address: address);
 
 Future<bool> isRefdataLoaded({required String hash}) =>
     RustLib.instance.api.crateApiElectionIsRefdataLoaded(hash: hash);

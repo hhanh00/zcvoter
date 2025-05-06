@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.9.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1065681055;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 292926751;
 
 // Section: executor
 
@@ -236,6 +236,42 @@ fn wire__crate__api__election__get_election_impl(
         },
     )
 }
+fn wire__crate__api__election__get_voting_address_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "get_voting_address",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_hash = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::election::get_voting_address(&api_hash).await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__init__init_app_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -339,6 +375,37 @@ fn wire__crate__api__election__is_refdata_loaded_impl(
                     .await,
                 )
             }
+        },
+    )
+}
+fn wire__crate__api__election__is_valid_address_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "is_valid_address",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_address = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok =
+                    Result::<_, ()>::Ok(crate::api::election::is_valid_address(&api_address))?;
+                Ok(output_ok)
+            })())
         },
     )
 }
@@ -812,13 +879,14 @@ fn pde_ffi_dispatcher_primary_impl(
             wire__crate__api__election__election_synchronize_impl(port, ptr, rust_vec_len, data_len)
         }
         5 => wire__crate__api__election__get_election_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__election__is_ballot_synced_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__election__is_refdata_loaded_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__election__list_elections_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__election__list_votes_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__election__vote_election_impl(port, ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__election__votes_available_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__election__get_voting_address_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__election__is_ballot_synced_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__election__is_refdata_loaded_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__election__list_elections_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__election__list_votes_impl(port, ptr, rust_vec_len, data_len),
+        15 => wire__crate__api__election__vote_election_impl(port, ptr, rust_vec_len, data_len),
+        16 => wire__crate__api__election__votes_available_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -831,8 +899,9 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        9 => wire__crate__api__election__is_valid_seed_impl(ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__init__set_log_stream_impl(ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__election__is_valid_address_impl(ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__election__is_valid_seed_impl(ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__init__set_log_stream_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

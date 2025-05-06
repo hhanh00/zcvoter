@@ -15,7 +15,9 @@ use crate::election::{get_election, get_fvk};
 
 pub async fn ballot_sync_status(pool: &SqlitePool) -> Result<(u32, u32)> {
     let mut connection = pool.acquire().await?;
-    let base_url = load_prop(&mut connection, "url").await?.expect("Missing URL");
+    let base_url = load_prop(&mut connection, "url")
+        .await?
+        .expect("Missing URL");
     let url = format!("{}/num_ballots", base_url);
     let n = reqwest::get(url).await?.text().await?;
     let n = u32::from_str(&n).expect("parse number of ballots");
@@ -34,7 +36,9 @@ pub async fn ballot_sync_status(pool: &SqlitePool) -> Result<(u32, u32)> {
 
 pub async fn ballot_sync(pool: &SqlitePool) -> Result<()> {
     let mut connection = pool.acquire().await?;
-    let base_url = load_prop(&mut connection, "url").await?.expect("Missing URL");
+    let base_url = load_prop(&mut connection, "url")
+        .await?
+        .expect("Missing URL");
     let election = get_election(&mut connection).await?;
     let fvk = get_fvk(&mut connection).await?;
 
@@ -74,6 +78,9 @@ pub async fn process_ballot(
     ballot: &Ballot,
     fvk: &FullViewingKey,
 ) -> Result<()> {
+    let (position,): (u32,) = sqlx::query_as("SELECT COUNT(*) FROM cmxs")
+        .fetch_one(&mut *connection)
+        .await?;
     for scope in 0..2 {
         let s = if scope == 0 {
             Scope::External
@@ -92,10 +99,6 @@ pub async fn process_ballot(
                 .execute(&mut *connection)
                 .await?;
             if let Some(note) = try_decrypt_ballot(&pivk, action)? {
-                let (position,): (u32,) = sqlx::query_as("SELECT COUNT(*) FROM cmxs")
-                    .fetch_one(&mut *connection)
-                    .await?;
-
                 store_note(
                     &mut *connection,
                     0,

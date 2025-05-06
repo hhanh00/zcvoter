@@ -9,6 +9,13 @@ String? isSeed(String? value) {
   return null;
 }
 
+String? isAddress(String? value) {
+  if (value == null || value.isEmpty) return null;
+
+  if (!isValidAddress(address: value)) return "Not a valid address";
+  return null;
+}
+
 Future<void> showException(BuildContext context, String message) async {
   await AwesomeDialog(
     context: context,
