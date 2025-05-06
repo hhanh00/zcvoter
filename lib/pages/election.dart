@@ -106,8 +106,10 @@ class ElectionPageState extends State<ElectionPage> {
                 subtitle: LinearProgressIndicator(value: progress!),
               ),
               Gap(8),
-              Text(
-                  "Please hold on while the election data is retrieved and processed."),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Please hold on while the election data is retrieved and processed.")),
             ],
           ]));
         }));

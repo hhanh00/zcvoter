@@ -42,7 +42,7 @@ zcash_protocol = "0.5"
 # zcash_transparent = {version = "0.2.3", features = ["transparent-inputs"]}
 # zip321 = "0.3"
 
-zcash-vote = {git = "https://github.com/hhanh00/zcash-vote", rev = "abb5d352732d5712ac0e5d672b5e2ff7f02ec9e9" }
+zcash-vote = {git = "https://github.com/hhanh00/zcash-vote", rev = "aeb69ccc6cde0c620f098cadb0169de6ab8fae7c" }
 #zcash-vote = {path = "../../zcash-vote"}
 
 orchard = {version = "0.11", features = ["vote"]}
