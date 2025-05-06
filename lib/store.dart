@@ -143,4 +143,15 @@ abstract class AppStoreBase with Store {
     final vs = await listVotes(hash: appStore.id!);
     votes = ObservableList.of(vs);
   }
+
+  @action
+  Future<void> deleteElection(String hash) async {
+    await removeElection(hash: hash);
+    election = null;
+    id = null;
+    refDataLoaded = false;
+    height = null;
+    availableVotes = 0;
+    votes.clear();
+  }
 }

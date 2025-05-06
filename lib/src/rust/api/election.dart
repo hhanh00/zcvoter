@@ -19,6 +19,9 @@ Future<String> connectElection(
     RustLib.instance.api
         .crateApiElectionConnectElection(url: url, lwd: lwd, seed: seed);
 
+Future<void> removeElection({required String hash}) =>
+    RustLib.instance.api.crateApiElectionRemoveElection(hash: hash);
+
 Future<List<ElectionRec>> listElections() =>
     RustLib.instance.api.crateApiElectionListElections();
 
