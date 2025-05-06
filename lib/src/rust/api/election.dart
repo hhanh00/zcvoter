@@ -10,6 +10,27 @@ part 'election.freezed.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
 
+Future<int> getOrchardHeight() =>
+    RustLib.instance.api.crateApiElectionGetOrchardHeight();
+
+Future<int> getLatestHeight({required String lwd}) =>
+    RustLib.instance.api.crateApiElectionGetLatestHeight(lwd: lwd);
+
+Stream<int> createElection(
+        {required String name,
+        required int start,
+        required int end,
+        required String question,
+        required List<String> answers,
+        required String lwd}) =>
+    RustLib.instance.api.crateApiElectionCreateElection(
+        name: name,
+        start: start,
+        end: end,
+        question: question,
+        answers: answers,
+        lwd: lwd);
+
 Future<void> createDirectoryDb({required String directory}) =>
     RustLib.instance.api
         .crateApiElectionCreateDirectoryDb(directory: directory);

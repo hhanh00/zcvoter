@@ -2767,6 +2767,7 @@ dependencies = [
  "sqlx",
  "thiserror 2.0.12",
  "tokio",
+ "tonic",
  "tonic-build",
  "tracing",
  "tracing-subscriber",

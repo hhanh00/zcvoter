@@ -62,7 +62,7 @@ orchard = {version = "0.11", features = ["vote"]}
 # sapling-crypto = "0.5"
 # secp256k1 = "0.29"
 # sha2 = "0.10"
-# tonic = {version = "0.13.0", features = ["tls-webpki-roots"]}
+tonic = {version = "0.13.0", features = ["tls-webpki-roots"]}
 
 # itertools = "0.14"
 
