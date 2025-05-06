@@ -4,7 +4,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:toastification/toastification.dart';
 import 'package:zcvoter/pages/home.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
 import 'package:zcvoter/store.dart';
@@ -96,10 +95,17 @@ class DelegatePageState extends State<DelegatePage> {
     if (!formKey.currentState!.saveAndValidate()) return;
     final vote = int.parse(voteController.text);
     final address = formKey.currentState!.fields["address"]!.value;
+    final confirmed = await confirmDialog(context, title: "Delegate Vote",
+        message: "Are you sure you want to delegate $vote votes to $address?");
+    if (!confirmed) return;
+
+    if (!mounted) return;
+    final wait = showBlockingDialog(context, "Submitting vote...");
     final voteHash = await voteElection(
         hash: appStore.id!,
         address: address,
         amount: BigInt.from(vote * ZatsPerVote));
+    wait.dismiss();
     if (!mounted) return;
     await showMessage(context, title: "Delegation submitted", "Delegation hash: $voteHash");
     if (!mounted) return;

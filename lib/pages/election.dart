@@ -70,11 +70,11 @@ class ElectionPageState extends State<ElectionPage> {
               child: Column(children: [
             if (refDataLoaded) ...[
               ListTile(
-                title: Text("Election ID"),
+                title: Tooltip(message: "Check that it matches the value published by the organizer", child: Text("Election ID")),
                 subtitle: Text(widget.election.hash),
               ),
               ListTile(
-                title: Text("Registration Range"),
+                title: Tooltip(message: "The block range when notes are considered eligible", child: Text("Registration Range")),
                 subtitle: Text(
                     "From ${election.startHeight} to ${election.endHeight}"),
               ),
@@ -90,6 +90,7 @@ class ElectionPageState extends State<ElectionPage> {
                     ...election.answers.asMap().entries.map((a) => ListTile(
                           leading: CircleAvatar(child: Text("${a.key + 1}")),
                           title: Text(a.value.value),
+                          onTap: () => GoRouter.of(context).push("/vote", extra: a.key),
                         )),
                   ]))
             ],
