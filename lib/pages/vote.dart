@@ -3,6 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:zcvoter/main.dart';
 import 'package:zcvoter/pages/home.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
@@ -127,5 +128,7 @@ class VotePageState extends State<VotePage> {
 
     if (!mounted) return;
     await showMessage(context, title: "Vote submitted", "Vote hash: $voteHash");
+    if (!mounted) return;
+    GoRouter.of(context).pop();
   }
 }

@@ -19,6 +19,8 @@ class ElectionPageState extends State<ElectionPage> {
     super.initState();
     Future(() async {
       await appStore.loadElectionData(widget.election.hash);
+      await appStore.updateAvailableVotes();
+      await appStore.updateVoteHistory();
       await appStore.startAutoSync();
     });
   }
@@ -38,6 +40,10 @@ class ElectionPageState extends State<ElectionPage> {
         appBar: AppBar(
           title: Text(widget.election.name),
           actions: [
+            IconButton(
+                tooltip: "Receive",
+                icon: const Icon(Icons.inbox),
+                onPressed: onReceive),
             IconButton(
                 tooltip: "Delegate",
                 icon: const Icon(Icons.forward),
@@ -99,6 +105,10 @@ class ElectionPageState extends State<ElectionPage> {
             ],
           ]));
         }));
+  }
+
+  onReceive() {
+    GoRouter.of(context).push("/receive");
   }
 
   onDelegate() {

@@ -4,6 +4,7 @@ import 'package:zcvoter/pages/add.dart';
 import 'package:zcvoter/pages/delegate.dart';
 import 'package:zcvoter/pages/election.dart';
 import 'package:zcvoter/pages/home.dart';
+import 'package:zcvoter/pages/receive.dart';
 import 'package:zcvoter/pages/vote.dart';
 import 'package:zcvoter/scanner.dart';
 import 'package:zcvoter/src/rust/api/election.dart';
@@ -22,6 +23,8 @@ final router = GoRouter(
         path: '/add-election', builder: (context, state) => const AddPage()),
     GoRoute(
         path: '/election', builder: (context, state) => ElectionPage(election: state.extra as ElectionRec)),
+    GoRoute(
+        path: '/receive', builder: (context, state) => ReceivePage()),
     GoRoute(
         path: '/vote', builder: (context, state) => VotePage()),
     GoRoute(

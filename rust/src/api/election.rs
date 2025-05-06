@@ -3,8 +3,9 @@ use std::{str::FromStr, sync::mpsc::channel};
 use anyhow::Result;
 use bip39::Mnemonic;
 use flutter_rust_bridge::frb;
+use orchard::keys::Scope;
 use sqlx::{sqlite::SqliteRow, Row};
-use zcash_vote::db::load_prop;
+use zcash_vote::{address::VoteAddress, db::load_prop};
 
 use crate::frb_generated::StreamSink;
 
@@ -65,6 +66,15 @@ pub async fn get_election(hash: &str) -> Result<ElectionData> {
 }
 
 #[frb]
+pub async fn get_voting_address(hash: &str) -> Result<String> {
+    let mut connection = get_pool(hash).await?.acquire().await?;
+    let fvk = crate::election::get_fvk(&mut connection).await?;
+    let address = fvk.address_at(0u64, Scope::External);
+    let vote_address = VoteAddress(address);
+    Ok(vote_address.encode())
+}
+
+#[frb]
 pub async fn vote_election(hash: &str, address: &str, amount: u64, choice: Option<u32>) -> Result<String> {
     let connection = get_pool(hash).await?;
     crate::election::vote_election(&connection, address, amount, choice).await
@@ -73,6 +83,11 @@ pub async fn vote_election(hash: &str, address: &str, amount: u64, choice: Optio
 #[frb(sync)]
 pub fn is_valid_seed(seed: &str) -> bool {
     Mnemonic::from_str(seed).is_ok()
+}
+
+#[frb(sync)]
+pub fn is_valid_address(address: &str) -> bool {
+    VoteAddress::decode(address).is_ok()
 }
 
 #[frb]
