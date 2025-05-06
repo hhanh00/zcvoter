@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.5.0...zcvoter-v1.5.1) (2025-05-06)
+
+
+### Bug Fixes
+
+* qr code scanning ([#28](https://github.com/hhanh00/zcvoter/issues/28)) ([1e66209](https://github.com/hhanh00/zcvoter/commit/1e66209f59a4364a7f0adfd5c4b116acc11fc20c))
+
 ## [1.5.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.4.0...zcvoter-v1.5.0) (2025-05-06)
 
 
