@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.5.1...zcvoter-v1.6.0) (2025-05-08)
+
+
+### Features
+
+* election builder ([c889d1c](https://github.com/hhanh00/zcvoter/commit/c889d1c95d88b12ad9052b5a822a6c2f4bd0cf48))
+
 ## [1.5.1](https://github.com/hhanh00/zcvoter/compare/zcvoter-v1.5.0...zcvoter-v1.5.1) (2025-05-06)
 
 
