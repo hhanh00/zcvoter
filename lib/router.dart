@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zcvoter/pages/add.dart';
+import 'package:zcvoter/pages/build.dart';
 import 'package:zcvoter/pages/delegate.dart';
 import 'package:zcvoter/pages/election.dart';
 import 'package:zcvoter/pages/home.dart';
@@ -19,6 +20,8 @@ final router = GoRouter(
   navigatorKey: navigatorKey,
   routes: [
     GoRoute(path: '/', builder: (context, state) => const HomePage()),
+    GoRoute(
+        path: '/build-election', builder: (context, state) => const BuildPage()),
     GoRoute(
         path: '/add-election', builder: (context, state) => const AddPage()),
     GoRoute(

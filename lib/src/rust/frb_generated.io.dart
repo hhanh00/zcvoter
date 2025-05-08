@@ -24,6 +24,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
   @protected
+  RustStreamSink<CreateElectionResult>
+      dco_decode_StreamSink_create_election_result_Sse(dynamic raw);
+
+  @protected
   RustStreamSink<LogMessage> dco_decode_StreamSink_log_message_Sse(dynamic raw);
 
   @protected
@@ -40,6 +44,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
+
+  @protected
+  CreateElectionResult dco_decode_create_election_result(dynamic raw);
 
   @protected
   ElectionData dco_decode_election_data(dynamic raw);
@@ -90,6 +97,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
+  RustStreamSink<CreateElectionResult>
+      sse_decode_StreamSink_create_election_result_Sse(
+          SseDeserializer deserializer);
+
+  @protected
   RustStreamSink<LogMessage> sse_decode_StreamSink_log_message_Sse(
       SseDeserializer deserializer);
 
@@ -108,6 +120,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  CreateElectionResult sse_decode_create_election_result(
+      SseDeserializer deserializer);
 
   @protected
   ElectionData sse_decode_election_data(SseDeserializer deserializer);
@@ -162,6 +178,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       AnyhowException self, SseSerializer serializer);
 
   @protected
+  void sse_encode_StreamSink_create_election_result_Sse(
+      RustStreamSink<CreateElectionResult> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_StreamSink_log_message_Sse(
       RustStreamSink<LogMessage> self, SseSerializer serializer);
 
@@ -180,6 +200,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_create_election_result(
+      CreateElectionResult self, SseSerializer serializer);
 
   @protected
   void sse_encode_election_data(ElectionData self, SseSerializer serializer);
