@@ -180,15 +180,15 @@ fn wire__crate__api__election__create_election_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_progress =
-                <StreamSink<u32, flutter_rust_bridge::for_generated::SseCodec>>::sse_decode(
-                    &mut deserializer,
-                );
+            let api_progress = <StreamSink<
+                crate::api::election::CreateElectionResult,
+                flutter_rust_bridge::for_generated::SseCodec,
+            >>::sse_decode(&mut deserializer);
             let api_name = <String>::sse_decode(&mut deserializer);
             let api_start = <u32>::sse_decode(&mut deserializer);
             let api_end = <u32>::sse_decode(&mut deserializer);
             let api_question = <String>::sse_decode(&mut deserializer);
-            let api_answers = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_answers = <String>::sse_decode(&mut deserializer);
             let api_lwd = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
@@ -833,6 +833,19 @@ impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
 }
 
 impl SseDecode
+    for StreamSink<
+        crate::api::election::CreateElectionResult,
+        flutter_rust_bridge::for_generated::SseCodec,
+    >
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <String>::sse_decode(deserializer);
+        return StreamSink::deserialize(inner);
+    }
+}
+
+impl SseDecode
     for StreamSink<crate::api::init::LogMessage, flutter_rust_bridge::for_generated::SseCodec>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -877,6 +890,38 @@ impl SseDecode for bool {
     }
 }
 
+impl SseDecode for crate::api::election::CreateElectionResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_height = <u32>::sse_decode(deserializer);
+                return crate::api::election::CreateElectionResult::Progress { height: var_height };
+            }
+            1 => {
+                let mut var_message = <String>::sse_decode(deserializer);
+                return crate::api::election::CreateElectionResult::Message {
+                    message: var_message,
+                };
+            }
+            2 => {
+                let mut var_hash = <String>::sse_decode(deserializer);
+                let mut var_phrase = <String>::sse_decode(deserializer);
+                let mut var_electionString = <String>::sse_decode(deserializer);
+                return crate::api::election::CreateElectionResult::Result {
+                    hash: var_hash,
+                    phrase: var_phrase,
+                    election_string: var_electionString,
+                };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::api::election::ElectionData {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -915,18 +960,6 @@ impl SseDecode for i64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_i64::<NativeEndian>().unwrap()
-    }
-}
-
-impl SseDecode for Vec<String> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut len_ = <i32>::sse_decode(deserializer);
-        let mut ans_ = vec![];
-        for idx_ in 0..len_ {
-            ans_.push(<String>::sse_decode(deserializer));
-        }
-        return ans_;
     }
 }
 
@@ -1140,6 +1173,44 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::election::Answer>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::election::CreateElectionResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::election::CreateElectionResult::Progress { height } => {
+                [0.into_dart(), height.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::election::CreateElectionResult::Message { message } => {
+                [1.into_dart(), message.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::election::CreateElectionResult::Result {
+                hash,
+                phrase,
+                election_string,
+            } => [
+                2.into_dart(),
+                hash.into_into_dart().into_dart(),
+                phrase.into_into_dart().into_dart(),
+                election_string.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::election::CreateElectionResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::election::CreateElectionResult>
+    for crate::api::election::CreateElectionResult
+{
+    fn into_into_dart(self) -> crate::api::election::CreateElectionResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::election::ElectionData {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -1235,6 +1306,18 @@ impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
 }
 
 impl SseEncode
+    for StreamSink<
+        crate::api::election::CreateElectionResult,
+        flutter_rust_bridge::for_generated::SseCodec,
+    >
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        unimplemented!("")
+    }
+}
+
+impl SseEncode
     for StreamSink<crate::api::init::LogMessage, flutter_rust_bridge::for_generated::SseCodec>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1272,6 +1355,35 @@ impl SseEncode for bool {
     }
 }
 
+impl SseEncode for crate::api::election::CreateElectionResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::election::CreateElectionResult::Progress { height } => {
+                <i32>::sse_encode(0, serializer);
+                <u32>::sse_encode(height, serializer);
+            }
+            crate::api::election::CreateElectionResult::Message { message } => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(message, serializer);
+            }
+            crate::api::election::CreateElectionResult::Result {
+                hash,
+                phrase,
+                election_string,
+            } => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(hash, serializer);
+                <String>::sse_encode(phrase, serializer);
+                <String>::sse_encode(election_string, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::api::election::ElectionData {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1297,16 +1409,6 @@ impl SseEncode for i64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_i64::<NativeEndian>(self).unwrap();
-    }
-}
-
-impl SseEncode for Vec<String> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(self.len() as _, serializer);
-        for item in self {
-            <String>::sse_encode(item, serializer);
-        }
     }
 }
 

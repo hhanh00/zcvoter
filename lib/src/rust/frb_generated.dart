@@ -88,12 +88,12 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiElectionCreateDirectoryDb({required String directory});
 
-  Stream<int> crateApiElectionCreateElection(
+  Stream<CreateElectionResult> crateApiElectionCreateElection(
       {required String name,
       required int start,
       required int end,
       required String question,
-      required List<String> answers,
+      required String answers,
       required String lwd});
 
   Stream<int> crateApiElectionElectionSynchronize({required String hash});
@@ -221,23 +221,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Stream<int> crateApiElectionCreateElection(
+  Stream<CreateElectionResult> crateApiElectionCreateElection(
       {required String name,
       required int start,
       required int end,
       required String question,
-      required List<String> answers,
+      required String answers,
       required String lwd}) {
-    final progress = RustStreamSink<int>();
+    final progress = RustStreamSink<CreateElectionResult>();
     unawaited(handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_StreamSink_u_32_Sse(progress, serializer);
+        sse_encode_StreamSink_create_election_result_Sse(progress, serializer);
         sse_encode_String(name, serializer);
         sse_encode_u_32(start, serializer);
         sse_encode_u_32(end, serializer);
         sse_encode_String(question, serializer);
-        sse_encode_list_String(answers, serializer);
+        sse_encode_String(answers, serializer);
         sse_encode_String(lwd, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 4, port: port_);
@@ -701,6 +701,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RustStreamSink<CreateElectionResult>
+      dco_decode_StreamSink_create_election_result_Sse(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError();
+  }
+
+  @protected
   RustStreamSink<LogMessage> dco_decode_StreamSink_log_message_Sse(
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -744,6 +751,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CreateElectionResult dco_decode_create_election_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return CreateElectionResult_Progress(
+          height: dco_decode_u_32(raw[1]),
+        );
+      case 1:
+        return CreateElectionResult_Message(
+          message: dco_decode_String(raw[1]),
+        );
+      case 2:
+        return CreateElectionResult_Result(
+          hash: dco_decode_String(raw[1]),
+          phrase: dco_decode_String(raw[2]),
+          electionString: dco_decode_String(raw[3]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
   ElectionData dco_decode_election_data(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -776,12 +806,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   PlatformInt64 dco_decode_i_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodeI64(raw);
-  }
-
-  @protected
-  List<String> dco_decode_list_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_String).toList();
   }
 
   @protected
@@ -880,6 +904,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RustStreamSink<CreateElectionResult>
+      sse_decode_StreamSink_create_election_result_Sse(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    throw UnimplementedError('Unreachable ()');
+  }
+
+  @protected
   RustStreamSink<LogMessage> sse_decode_StreamSink_log_message_Sse(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -921,6 +953,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CreateElectionResult sse_decode_create_election_result(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_height = sse_decode_u_32(deserializer);
+        return CreateElectionResult_Progress(height: var_height);
+      case 1:
+        var var_message = sse_decode_String(deserializer);
+        return CreateElectionResult_Message(message: var_message);
+      case 2:
+        var var_hash = sse_decode_String(deserializer);
+        var var_phrase = sse_decode_String(deserializer);
+        var var_electionString = sse_decode_String(deserializer);
+        return CreateElectionResult_Result(
+            hash: var_hash,
+            phrase: var_phrase,
+            electionString: var_electionString);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
   ElectionData sse_decode_election_data(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_name = sse_decode_String(deserializer);
@@ -951,18 +1009,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getPlatformInt64();
-  }
-
-  @protected
-  List<String> sse_decode_list_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <String>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_String(deserializer));
-    }
-    return ans_;
   }
 
   @protected
@@ -1092,6 +1138,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_StreamSink_create_election_result_Sse(
+      RustStreamSink<CreateElectionResult> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(
+        self.setupAndSerialize(
+            codec: SseCodec(
+          decodeSuccessData: sse_decode_create_election_result,
+          decodeErrorData: sse_decode_AnyhowException,
+        )),
+        serializer);
+  }
+
+  @protected
   void sse_encode_StreamSink_log_message_Sse(
       RustStreamSink<LogMessage> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1143,6 +1202,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_create_election_result(
+      CreateElectionResult self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case CreateElectionResult_Progress(height: final height):
+        sse_encode_i_32(0, serializer);
+        sse_encode_u_32(height, serializer);
+      case CreateElectionResult_Message(message: final message):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(message, serializer);
+      case CreateElectionResult_Result(
+          hash: final hash,
+          phrase: final phrase,
+          electionString: final electionString
+        ):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(hash, serializer);
+        sse_encode_String(phrase, serializer);
+        sse_encode_String(electionString, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_election_data(ElectionData self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.name, serializer);
@@ -1165,15 +1247,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putPlatformInt64(self);
-  }
-
-  @protected
-  void sse_encode_list_String(List<String> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_String(item, serializer);
-    }
   }
 
   @protected

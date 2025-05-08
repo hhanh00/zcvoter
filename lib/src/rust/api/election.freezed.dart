@@ -158,6 +158,569 @@ abstract class _Answer implements Answer {
 }
 
 /// @nodoc
+mixin _$CreateElectionResult {
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(int height) progress,
+    required TResult Function(String message) message,
+    required TResult Function(String hash, String phrase, String electionString)
+        result,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(int height)? progress,
+    TResult? Function(String message)? message,
+    TResult? Function(String hash, String phrase, String electionString)?
+        result,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(int height)? progress,
+    TResult Function(String message)? message,
+    TResult Function(String hash, String phrase, String electionString)? result,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CreateElectionResult_Progress value) progress,
+    required TResult Function(CreateElectionResult_Message value) message,
+    required TResult Function(CreateElectionResult_Result value) result,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CreateElectionResult_Progress value)? progress,
+    TResult? Function(CreateElectionResult_Message value)? message,
+    TResult? Function(CreateElectionResult_Result value)? result,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CreateElectionResult_Progress value)? progress,
+    TResult Function(CreateElectionResult_Message value)? message,
+    TResult Function(CreateElectionResult_Result value)? result,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CreateElectionResultCopyWith<$Res> {
+  factory $CreateElectionResultCopyWith(CreateElectionResult value,
+          $Res Function(CreateElectionResult) then) =
+      _$CreateElectionResultCopyWithImpl<$Res, CreateElectionResult>;
+}
+
+/// @nodoc
+class _$CreateElectionResultCopyWithImpl<$Res,
+        $Val extends CreateElectionResult>
+    implements $CreateElectionResultCopyWith<$Res> {
+  _$CreateElectionResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+abstract class _$$CreateElectionResult_ProgressImplCopyWith<$Res> {
+  factory _$$CreateElectionResult_ProgressImplCopyWith(
+          _$CreateElectionResult_ProgressImpl value,
+          $Res Function(_$CreateElectionResult_ProgressImpl) then) =
+      __$$CreateElectionResult_ProgressImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int height});
+}
+
+/// @nodoc
+class __$$CreateElectionResult_ProgressImplCopyWithImpl<$Res>
+    extends _$CreateElectionResultCopyWithImpl<$Res,
+        _$CreateElectionResult_ProgressImpl>
+    implements _$$CreateElectionResult_ProgressImplCopyWith<$Res> {
+  __$$CreateElectionResult_ProgressImplCopyWithImpl(
+      _$CreateElectionResult_ProgressImpl _value,
+      $Res Function(_$CreateElectionResult_ProgressImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? height = null,
+  }) {
+    return _then(_$CreateElectionResult_ProgressImpl(
+      height: null == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$CreateElectionResult_ProgressImpl
+    extends CreateElectionResult_Progress {
+  const _$CreateElectionResult_ProgressImpl({required this.height}) : super._();
+
+  @override
+  final int height;
+
+  @override
+  String toString() {
+    return 'CreateElectionResult.progress(height: $height)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreateElectionResult_ProgressImpl &&
+            (identical(other.height, height) || other.height == height));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, height);
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreateElectionResult_ProgressImplCopyWith<
+          _$CreateElectionResult_ProgressImpl>
+      get copyWith => __$$CreateElectionResult_ProgressImplCopyWithImpl<
+          _$CreateElectionResult_ProgressImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(int height) progress,
+    required TResult Function(String message) message,
+    required TResult Function(String hash, String phrase, String electionString)
+        result,
+  }) {
+    return progress(height);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(int height)? progress,
+    TResult? Function(String message)? message,
+    TResult? Function(String hash, String phrase, String electionString)?
+        result,
+  }) {
+    return progress?.call(height);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(int height)? progress,
+    TResult Function(String message)? message,
+    TResult Function(String hash, String phrase, String electionString)? result,
+    required TResult orElse(),
+  }) {
+    if (progress != null) {
+      return progress(height);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CreateElectionResult_Progress value) progress,
+    required TResult Function(CreateElectionResult_Message value) message,
+    required TResult Function(CreateElectionResult_Result value) result,
+  }) {
+    return progress(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CreateElectionResult_Progress value)? progress,
+    TResult? Function(CreateElectionResult_Message value)? message,
+    TResult? Function(CreateElectionResult_Result value)? result,
+  }) {
+    return progress?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CreateElectionResult_Progress value)? progress,
+    TResult Function(CreateElectionResult_Message value)? message,
+    TResult Function(CreateElectionResult_Result value)? result,
+    required TResult orElse(),
+  }) {
+    if (progress != null) {
+      return progress(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class CreateElectionResult_Progress extends CreateElectionResult {
+  const factory CreateElectionResult_Progress({required final int height}) =
+      _$CreateElectionResult_ProgressImpl;
+  const CreateElectionResult_Progress._() : super._();
+
+  int get height;
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CreateElectionResult_ProgressImplCopyWith<
+          _$CreateElectionResult_ProgressImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$CreateElectionResult_MessageImplCopyWith<$Res> {
+  factory _$$CreateElectionResult_MessageImplCopyWith(
+          _$CreateElectionResult_MessageImpl value,
+          $Res Function(_$CreateElectionResult_MessageImpl) then) =
+      __$$CreateElectionResult_MessageImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$CreateElectionResult_MessageImplCopyWithImpl<$Res>
+    extends _$CreateElectionResultCopyWithImpl<$Res,
+        _$CreateElectionResult_MessageImpl>
+    implements _$$CreateElectionResult_MessageImplCopyWith<$Res> {
+  __$$CreateElectionResult_MessageImplCopyWithImpl(
+      _$CreateElectionResult_MessageImpl _value,
+      $Res Function(_$CreateElectionResult_MessageImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$CreateElectionResult_MessageImpl(
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$CreateElectionResult_MessageImpl extends CreateElectionResult_Message {
+  const _$CreateElectionResult_MessageImpl({required this.message}) : super._();
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'CreateElectionResult.message(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreateElectionResult_MessageImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreateElectionResult_MessageImplCopyWith<
+          _$CreateElectionResult_MessageImpl>
+      get copyWith => __$$CreateElectionResult_MessageImplCopyWithImpl<
+          _$CreateElectionResult_MessageImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(int height) progress,
+    required TResult Function(String message) message,
+    required TResult Function(String hash, String phrase, String electionString)
+        result,
+  }) {
+    return message(this.message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(int height)? progress,
+    TResult? Function(String message)? message,
+    TResult? Function(String hash, String phrase, String electionString)?
+        result,
+  }) {
+    return message?.call(this.message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(int height)? progress,
+    TResult Function(String message)? message,
+    TResult Function(String hash, String phrase, String electionString)? result,
+    required TResult orElse(),
+  }) {
+    if (message != null) {
+      return message(this.message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CreateElectionResult_Progress value) progress,
+    required TResult Function(CreateElectionResult_Message value) message,
+    required TResult Function(CreateElectionResult_Result value) result,
+  }) {
+    return message(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CreateElectionResult_Progress value)? progress,
+    TResult? Function(CreateElectionResult_Message value)? message,
+    TResult? Function(CreateElectionResult_Result value)? result,
+  }) {
+    return message?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CreateElectionResult_Progress value)? progress,
+    TResult Function(CreateElectionResult_Message value)? message,
+    TResult Function(CreateElectionResult_Result value)? result,
+    required TResult orElse(),
+  }) {
+    if (message != null) {
+      return message(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class CreateElectionResult_Message extends CreateElectionResult {
+  const factory CreateElectionResult_Message({required final String message}) =
+      _$CreateElectionResult_MessageImpl;
+  const CreateElectionResult_Message._() : super._();
+
+  String get message;
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CreateElectionResult_MessageImplCopyWith<
+          _$CreateElectionResult_MessageImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$CreateElectionResult_ResultImplCopyWith<$Res> {
+  factory _$$CreateElectionResult_ResultImplCopyWith(
+          _$CreateElectionResult_ResultImpl value,
+          $Res Function(_$CreateElectionResult_ResultImpl) then) =
+      __$$CreateElectionResult_ResultImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String hash, String phrase, String electionString});
+}
+
+/// @nodoc
+class __$$CreateElectionResult_ResultImplCopyWithImpl<$Res>
+    extends _$CreateElectionResultCopyWithImpl<$Res,
+        _$CreateElectionResult_ResultImpl>
+    implements _$$CreateElectionResult_ResultImplCopyWith<$Res> {
+  __$$CreateElectionResult_ResultImplCopyWithImpl(
+      _$CreateElectionResult_ResultImpl _value,
+      $Res Function(_$CreateElectionResult_ResultImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? hash = null,
+    Object? phrase = null,
+    Object? electionString = null,
+  }) {
+    return _then(_$CreateElectionResult_ResultImpl(
+      hash: null == hash
+          ? _value.hash
+          : hash // ignore: cast_nullable_to_non_nullable
+              as String,
+      phrase: null == phrase
+          ? _value.phrase
+          : phrase // ignore: cast_nullable_to_non_nullable
+              as String,
+      electionString: null == electionString
+          ? _value.electionString
+          : electionString // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$CreateElectionResult_ResultImpl extends CreateElectionResult_Result {
+  const _$CreateElectionResult_ResultImpl(
+      {required this.hash, required this.phrase, required this.electionString})
+      : super._();
+
+  @override
+  final String hash;
+  @override
+  final String phrase;
+  @override
+  final String electionString;
+
+  @override
+  String toString() {
+    return 'CreateElectionResult.result(hash: $hash, phrase: $phrase, electionString: $electionString)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreateElectionResult_ResultImpl &&
+            (identical(other.hash, hash) || other.hash == hash) &&
+            (identical(other.phrase, phrase) || other.phrase == phrase) &&
+            (identical(other.electionString, electionString) ||
+                other.electionString == electionString));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, hash, phrase, electionString);
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreateElectionResult_ResultImplCopyWith<_$CreateElectionResult_ResultImpl>
+      get copyWith => __$$CreateElectionResult_ResultImplCopyWithImpl<
+          _$CreateElectionResult_ResultImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(int height) progress,
+    required TResult Function(String message) message,
+    required TResult Function(String hash, String phrase, String electionString)
+        result,
+  }) {
+    return result(hash, phrase, electionString);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(int height)? progress,
+    TResult? Function(String message)? message,
+    TResult? Function(String hash, String phrase, String electionString)?
+        result,
+  }) {
+    return result?.call(hash, phrase, electionString);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(int height)? progress,
+    TResult Function(String message)? message,
+    TResult Function(String hash, String phrase, String electionString)? result,
+    required TResult orElse(),
+  }) {
+    if (result != null) {
+      return result(hash, phrase, electionString);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CreateElectionResult_Progress value) progress,
+    required TResult Function(CreateElectionResult_Message value) message,
+    required TResult Function(CreateElectionResult_Result value) result,
+  }) {
+    return result(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CreateElectionResult_Progress value)? progress,
+    TResult? Function(CreateElectionResult_Message value)? message,
+    TResult? Function(CreateElectionResult_Result value)? result,
+  }) {
+    return result?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CreateElectionResult_Progress value)? progress,
+    TResult Function(CreateElectionResult_Message value)? message,
+    TResult Function(CreateElectionResult_Result value)? result,
+    required TResult orElse(),
+  }) {
+    if (result != null) {
+      return result(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class CreateElectionResult_Result extends CreateElectionResult {
+  const factory CreateElectionResult_Result(
+          {required final String hash,
+          required final String phrase,
+          required final String electionString}) =
+      _$CreateElectionResult_ResultImpl;
+  const CreateElectionResult_Result._() : super._();
+
+  String get hash;
+  String get phrase;
+  String get electionString;
+
+  /// Create a copy of CreateElectionResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CreateElectionResult_ResultImplCopyWith<_$CreateElectionResult_ResultImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$ElectionData {
   String get name => throw _privateConstructorUsedError;
   int get startHeight => throw _privateConstructorUsedError;

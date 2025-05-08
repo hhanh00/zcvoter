@@ -24,6 +24,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
   @protected
+  RustStreamSink<CreateElectionResult>
+      dco_decode_StreamSink_create_election_result_Sse(dynamic raw);
+
+  @protected
   RustStreamSink<LogMessage> dco_decode_StreamSink_log_message_Sse(dynamic raw);
 
   @protected
@@ -42,6 +46,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int dco_decode_box_autoadd_u_32(dynamic raw);
 
   @protected
+  CreateElectionResult dco_decode_create_election_result(dynamic raw);
+
+  @protected
   ElectionData dco_decode_election_data(dynamic raw);
 
   @protected
@@ -49,9 +56,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 dco_decode_i_64(dynamic raw);
-
-  @protected
-  List<String> dco_decode_list_String(dynamic raw);
 
   @protected
   List<Answer> dco_decode_list_answer(dynamic raw);
@@ -93,6 +97,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
+  RustStreamSink<CreateElectionResult>
+      sse_decode_StreamSink_create_election_result_Sse(
+          SseDeserializer deserializer);
+
+  @protected
   RustStreamSink<LogMessage> sse_decode_StreamSink_log_message_Sse(
       SseDeserializer deserializer);
 
@@ -113,6 +122,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
+  CreateElectionResult sse_decode_create_election_result(
+      SseDeserializer deserializer);
+
+  @protected
   ElectionData sse_decode_election_data(SseDeserializer deserializer);
 
   @protected
@@ -120,9 +133,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
-
-  @protected
-  List<String> sse_decode_list_String(SseDeserializer deserializer);
 
   @protected
   List<Answer> sse_decode_list_answer(SseDeserializer deserializer);
@@ -168,6 +178,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       AnyhowException self, SseSerializer serializer);
 
   @protected
+  void sse_encode_StreamSink_create_election_result_Sse(
+      RustStreamSink<CreateElectionResult> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_StreamSink_log_message_Sse(
       RustStreamSink<LogMessage> self, SseSerializer serializer);
 
@@ -188,6 +202,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
 
   @protected
+  void sse_encode_create_election_result(
+      CreateElectionResult self, SseSerializer serializer);
+
+  @protected
   void sse_encode_election_data(ElectionData self, SseSerializer serializer);
 
   @protected
@@ -195,9 +213,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_list_String(List<String> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_answer(List<Answer> self, SseSerializer serializer);

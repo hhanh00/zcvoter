@@ -3,15 +3,16 @@ use std::{str::FromStr, sync::mpsc::channel};
 use anyhow::Result;
 use bip39::Mnemonic;
 use flutter_rust_bridge::frb;
-use orchard::{keys::Scope, vote::OrchardHash};
+use orchard::{keys::{FullViewingKey, Scope, SpendingKey}, vote::OrchardHash};
 use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteRow},
     Row, SqlitePool,
 };
 use tonic::transport::Endpoint;
+use zcash_primitives::zip32::AccountId;
 use zcash_protocol::consensus::{Network, Parameters};
 use zcash_vote::{
-    address::VoteAddress, db::load_prop, download::download_reference_data, election::{CandidateChoice, Election}, rpc::{compact_tx_streamer_client::CompactTxStreamerClient, ChainSpec}
+    address::VoteAddress, db::load_prop, download::download_reference_data, election::{CandidateChoice, Election}, rpc::{compact_tx_streamer_client::CompactTxStreamerClient, ChainSpec}, trees::{compute_cmx_root, compute_nf_root}
 };
 
 use crate::frb_generated::StreamSink;
@@ -38,14 +39,14 @@ pub async fn get_latest_height(lwd: &str) -> Result<u32> {
     Ok(block_id.height as u32)
 }
 
-//#[frb]
+#[frb]
 pub async fn create_election(
-    progress: StreamSink<u32>,
+    progress: StreamSink<CreateElectionResult>,
     name: &str,
     start: u32,
     end: u32,
     question: &str,
-    answers: &[String],
+    answers: &str,
     lwd: &str,
 ) -> Result<()> {
     let options = SqliteConnectOptions::new().in_memory(true);
@@ -53,28 +54,79 @@ pub async fn create_election(
     let mut connection = pool.acquire().await?;
     zcash_vote::db::create_schema(&mut connection).await?;
 
-    let election = Election {
+    let mnemonic = Mnemonic::generate_in(bip39::Language::English, 24)?;
+    let phrase = mnemonic.to_string();
+    let seed = mnemonic.to_seed("vote");
+    let candidates = answers
+        .trim()
+        .split("\n")
+        .enumerate()
+        .map(|(i, choice)| {
+            let spk = SpendingKey::from_zip32_seed(&seed, 133, AccountId::try_from(i as u32).unwrap()).unwrap();
+            let fvk = FullViewingKey::from(&spk);
+            let address = fvk.address_at(0u64, Scope::External);
+            let vote_address = VoteAddress(address);
+
+            CandidateChoice {
+                address: vote_address.to_string(),
+                choice: choice.to_string(),
+            }
+        })
+        .collect::<Vec<_>>();
+
+    let mut election = Election {
         name: name.to_string(),
         start_height: start,
         end_height: end,
         question: question.to_string(),
-        candidates: answers.iter().map(|a| CandidateChoice {
-            address: "".to_string(),
-            choice: a.clone(),
-        }).collect(),
+        candidates,
         signature_required: true,
         cmx: OrchardHash::default(),
         nf: OrchardHash::default(),
         cmx_frontier: None,
     };
 
+    let prg = progress.clone();
     download_reference_data(&mut connection, 0, &election, None, lwd, move |h| {
         if h % 1000 == 0 || h == end {
-            progress.add(h).expect("progress sink");
+            prg.add(CreateElectionResult::Progress { height: h }).expect("progress sink");
         }
     }).await?;
 
+    progress.add(CreateElectionResult::Message { message: "Computing nullifiers".to_string() }).expect("progress sink");
+    let nf_root = compute_nf_root(&mut connection).await?;
+    progress.add(CreateElectionResult::Message { message: "Computing note commitments".to_string() }).expect("progress sink");
+    let (cmx_root, frontier) = compute_cmx_root(&mut connection).await?;
+
+    election.nf = nf_root;
+    election.cmx = cmx_root;
+    election.cmx_frontier = frontier;
+
+    let hash = election.id();
+
+    let election_string = serde_json::to_string(&election)?;
+    progress.add(CreateElectionResult::Result {
+        hash,
+        phrase: phrase.clone(),
+        election_string: election_string.clone(),
+    }).expect("progress sink");
     Ok(())
+}
+
+#[frb]
+#[derive(Debug, Clone)]
+pub enum CreateElectionResult {
+    Progress {
+        height: u32,
+    },
+    Message {
+        message: String,
+    },
+    Result {
+        hash: String,
+        phrase: String,
+        election_string: String,
+    },
 }
 
 #[frb]

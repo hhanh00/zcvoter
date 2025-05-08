@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'election.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
 Future<int> getOrchardHeight() =>
     RustLib.instance.api.crateApiElectionGetOrchardHeight();
@@ -16,12 +16,12 @@ Future<int> getOrchardHeight() =>
 Future<int> getLatestHeight({required String lwd}) =>
     RustLib.instance.api.crateApiElectionGetLatestHeight(lwd: lwd);
 
-Stream<int> createElection(
+Stream<CreateElectionResult> createElection(
         {required String name,
         required int start,
         required int end,
         required String question,
-        required List<String> answers,
+        required String answers,
         required String lwd}) =>
     RustLib.instance.api.crateApiElectionCreateElection(
         name: name,
@@ -90,6 +90,23 @@ class Answer with _$Answer {
     required String address,
     required String value,
   }) = _Answer;
+}
+
+@freezed
+sealed class CreateElectionResult with _$CreateElectionResult {
+  const CreateElectionResult._();
+
+  const factory CreateElectionResult.progress({
+    required int height,
+  }) = CreateElectionResult_Progress;
+  const factory CreateElectionResult.message({
+    required String message,
+  }) = CreateElectionResult_Message;
+  const factory CreateElectionResult.result({
+    required String hash,
+    required String phrase,
+    required String electionString,
+  }) = CreateElectionResult_Result;
 }
 
 @freezed

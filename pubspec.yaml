@@ -33,6 +33,7 @@ dependencies:
   mobile_scanner: ^6.0.7
   qr_flutter: ^4.1.0
   flutter_native_splash: ^2.4.6
+  file_picker: ^10.1.2
 
 dev_dependencies:
   flutter_test:
